@@ -90,7 +90,9 @@ private:
 
 bool isValidCombination(const PieceGroup& group);
 
+bool isValidColorSequence(const PieceGroup& group);
 
+bool isValidNumberSequence(const PieceGroup& group);
 //-----------------------------------------------------------------------------
 
 

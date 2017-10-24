@@ -6,6 +6,7 @@ add_definitions( -std=c++11 )
 
 add_executable(${PROJECT_NAME}
     main.cpp
+    base_types.cpp
     base_types.h
     )
 

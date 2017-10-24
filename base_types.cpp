@@ -8,23 +8,39 @@ bool isValidCombination(const PieceGroup &group)
 
 bool isValidColorSequence(const PieceGroup &gr)
 {
-    // using bitwise operation is easy to see that there must be
-    // only a single one for each column of the binary representation
-    // therefore if all the color are different, the binary operator &
-    // should result in 0.
-    // note that this test also take into account the JOLLY
-   switch(gr.size())
-   {
-   case 3: return (gr[0].color() & gr[1].color() & gr[2].color()) == 0;
-   case 4: return (gr[0].color() & gr[1].color() & gr[2].color() & gr[3].color()) == 0;
-   default: return false;
-   }
-   // dead code...
-   return false;
+    if( gr.size() <=2 ||  gr.size()>=5 ) return false;
+
+    bool color_found[4] = { false, false, false, false };
+    uint8_t first_number = 0;
+
+    for(int i=0; i < gr.size(); i++ )
+    {
+        const Piece& piece = gr[i];
+
+        if( piece.isJolly() ) continue;
+
+        const uint8_t index = static_cast<uint8_t>( piece.color() );
+        if( color_found[ index ] ){
+            return false;
+        }
+        else{
+           color_found[ index ] = true;
+        }
+
+        if( first_number == 0){
+            first_number = piece.number();
+        }
+        else{
+            if (first_number != piece.number() ) {
+                return false;
+            }
+        }
+    }
+    return true;
 }
 
 bool isValidNumberSequence(const PieceGroup &group)
 {
-    //TODO
+    throw std::runtime_error("NOT implemented yet");
     return false;
 }

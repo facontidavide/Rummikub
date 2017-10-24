@@ -4,13 +4,13 @@
 #include <iostream>
 #include <stdint.h>
 
-// see the implementation of isValidColorSequence to understand why I am doing this
+
 enum Color{
-    YELLOW = 0X1, // binary 0001
-    RED    = 0X2, // binary 0010
-    BLUE   = 0X4, // binary 0100
-    BLACK  = 0X8, // binary 1000
-    JOLLY  = 0x0  // binary 0000
+    YELLOW = 0,
+    RED    = 1,
+    BLUE   = 2,
+    BLACK  = 3,
+    JOLLY  = 4
 };
 
 class Piece{
@@ -19,10 +19,16 @@ public:
     Piece(Color col, uint8_t value): _data( { static_cast<uint8_t>(col),value} ) {}
 
     Color color() const    { return static_cast<Color>(_data.col); }
+
     uint8_t number() const { return _data.num; }
 
     bool isInitialized() const { return _data.num != 0; }
+
     bool isJolly() const       { return _data.col == JOLLY; }
+
+    bool operator ==( const Piece& other) const;
+
+    bool operator !=( const Piece& other) const;
 
 private:
     // both the color and the number can be stored in a single byte.
@@ -36,6 +42,7 @@ private:
     };
     Storage _data;
 };
+
 
 const Piece Jolly(JOLLY, 0XFF);
 
@@ -58,7 +65,7 @@ public:
     PieceGroup(const_iterator it_front, const_iterator it_back);
 
     const_iterator begin() const { return &_data[0]; }
-    const_iterator end()   const { return &_data[_size-1]; }
+    const_iterator end()   const { return &_data[_size]; }
 
     iterator begin()  { return &_data[0]; }
     iterator end()    { return &_data[_size-1]; }
@@ -72,8 +79,8 @@ public:
 
     uint8_t size() const { return _size; }
 
-    const Piece& operator[](uint8_t index) const { return _data[index]; }
-    Piece& operator[](uint8_t index)             { return _data[index]; }
+    const Piece& operator[](int index) const { return _data[index]; }
+    Piece& operator[](int index)             { return _data[index]; }
 
     static uint8_t maxSize() { return 13; }
 
@@ -96,6 +103,15 @@ bool isValidColorSequence(const PieceGroup& group);
 bool isValidNumberSequence(const PieceGroup& group);
 //-----------------------------------------------------------------------------
 
+inline bool Piece::operator ==(const Piece &other) const
+{
+    return (_data.col == other._data.col) && (_data.num == other._data.num);
+}
+
+inline bool Piece::operator !=(const Piece &other) const
+{
+    return (_data.col != other._data.col) || (_data.num != other._data.num);
+}
 
 inline PieceGroup::PieceGroup(PieceGroup::const_iterator it_front, PieceGroup::const_iterator it_back): _size(0)
 {

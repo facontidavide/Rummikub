@@ -4,24 +4,25 @@
 #include <iostream>
 #include <stdint.h>
 
+// see the implementation of isValidColorSequence to understand why I am doing this
 enum Color{
     YELLOW = 0X1, // binary 0001
-    RED = 0X2,    // binary 0010
-    BLUE = 0X4,   // binary 0100
-    BLACK = 0X8,  // binary 1000
-    JOLLY = 0x0   // binary 0000
+    RED    = 0X2, // binary 0010
+    BLUE   = 0X4, // binary 0100
+    BLACK  = 0X8, // binary 1000
+    JOLLY  = 0x0  // binary 0000
 };
 
 class Piece{
 public:
     Piece(): _data({0,0}) {}
-    Piece(Color col, uint8_t value): _data( {col,value} ) {}
+    Piece(Color col, uint8_t value): _data( { static_cast<uint8_t>(col),value} ) {}
 
-    Color color() const { return static_cast<Color>(_data.col); }
+    Color color() const    { return static_cast<Color>(_data.col); }
     uint8_t number() const { return _data.num; }
 
     bool isInitialized() const { return _data.num != 0; }
-    bool isJolly() const { return _data.col == JOLLY; }
+    bool isJolly() const       { return _data.col == JOLLY; }
 
 private:
     // both the color and the number can be stored in a single byte.
@@ -36,7 +37,7 @@ private:
     Storage _data;
 };
 
-const Piece Jolly(JOLLY, 0XF);
+const Piece Jolly(JOLLY, 0X0);
 
 
 //-------------------------------
@@ -120,7 +121,7 @@ inline void PieceGroup::insert(int pos, Piece value)
 inline std::pair<PieceGroup, PieceGroup> PieceGroup::split(int pos)
 {
     return { PieceGroup( &_data[0],   &_data[pos-1]),
-                PieceGroup( &_data[pos], &_data[_size-1]) };
+             PieceGroup( &_data[pos], &_data[_size-1]) };
 }
 
 #endif // BASE_TYPES_H

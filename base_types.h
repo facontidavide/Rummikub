@@ -37,7 +37,7 @@ private:
     Storage _data;
 };
 
-const Piece Jolly(JOLLY, 0X0);
+const Piece Jolly(JOLLY, 0XFF);
 
 
 //-------------------------------

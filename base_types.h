@@ -10,19 +10,20 @@ enum Color{
     RED    = 1,
     BLUE   = 2,
     BLACK  = 3,
-    JOLLY  = 4
+    JOLLY  = 4,
+    UNDEFINED = 15
 };
 
 class Piece{
 public:
-    Piece(): _data({0,0}) {}
+    Piece(): _data({UNDEFINED,0}) {}
     Piece(Color col, uint8_t value): _data( { static_cast<uint8_t>(col),value} ) {}
 
     Color color() const    { return static_cast<Color>(_data.col); }
 
     uint8_t number() const { return _data.num; }
 
-    bool isInitialized() const { return _data.num != 0; }
+    bool isInitialized() const { return _data.num != 0 || _data.col == UNDEFINED; }
 
     bool isJolly() const       { return _data.col == JOLLY; }
 

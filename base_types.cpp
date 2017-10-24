@@ -1,5 +1,7 @@
+#include <random>
+#include <algorithm>
+#include <iterator>
 #include "base_types.h"
-
 
 bool isValidCombination(const PieceGroup &group)
 {
@@ -60,5 +62,48 @@ bool isValidNumberSequence(const PieceGroup &gr)
 
     //TODO check the numbers
     throw std::runtime_error("NOT implemented yet");
+    return false;
+}
+
+RandomPiecesStack::RandomPiecesStack()
+{
+    _pieces_stack.reserve( 13*4 + 3);
+
+    for(uint8_t num=1; num<=13; num++)
+    {
+        for( Color col: {BLACK, YELLOW, RED, BLUE} )
+        {
+            _pieces_stack.push_back( Piece(col, num) );
+        }
+    }
+
+    for(uint8_t j=0; j<3; j++){
+        _pieces_stack.push_back(Jolly);
+    }
+
+    // http://en.cppreference.com/w/cpp/algorithm/random_shuffle
+    std::random_device rd;
+    std::mt19937 g(rd());
+    std::shuffle( _pieces_stack.begin(), _pieces_stack.end(), g);
+}
+
+Piece RandomPiecesStack::pop_back()
+{
+    if( _pieces_stack.empty() ) return Piece();
+    Piece out = _pieces_stack.back();
+    _pieces_stack.pop_back();
+    return out;
+}
+
+bool RandomPiecesStack::removePiece(Piece p)
+{
+    for (size_t i=0; i< _pieces_stack.size(); i++)
+    {
+        if( p == _pieces_stack[i] )
+        {
+            _pieces_stack.erase( _pieces_stack.begin() + i );
+            return true;
+        }
+    }
     return false;
 }

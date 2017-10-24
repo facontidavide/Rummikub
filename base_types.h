@@ -3,7 +3,7 @@
 
 #include <iostream>
 #include <stdint.h>
-
+#include <vector>
 
 enum Color{
     YELLOW = 0,
@@ -96,6 +96,24 @@ private:
    uint8_t _size;
 };
 
+
+class RandomPiecesStack
+{
+public:
+    //generates a random sequence
+    RandomPiecesStack();
+
+    size_t size() const { return _pieces_stack.size(); }
+
+    // pick a piece from the stack. Size will be decremented by 1.
+    Piece pop_back();
+
+    // remove a specific piece from the stack. usually used in testing and debugging.
+    bool removePiece( Piece p);
+
+private:
+    std::vector<Piece> _pieces_stack;
+};
 
 bool isValidCombination(const PieceGroup& group);
 

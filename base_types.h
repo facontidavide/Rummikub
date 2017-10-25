@@ -4,6 +4,7 @@
 #include <iostream>
 #include <stdint.h>
 #include <vector>
+#include <algorithm>    // std::sort
 
 enum Color{
     YELLOW = 0,
@@ -16,7 +17,7 @@ enum Color{
 
 class Piece{
 public:
-    Piece(): _data({UNDEFINED,0}) {}
+    Piece(): _data({UNDEFINED, 15}) {} // number 15 makes easier to sort if is jolly
     Piece(Color col, uint8_t value): _data( { static_cast<uint8_t>(col),value} ) {}
 
     Color color() const    { return static_cast<Color>(_data.col); }
@@ -71,8 +72,12 @@ public:
     iterator begin()  { return &_data[0]; }
     iterator end()    { return &_data[_size-1]; }
 
+    bool operator() (Piece a, Piece b) { return (a.number() < b.number());}
+
     void push_back(Piece val);
     void pop_back();
+
+    void sort();
 
     void insert(int pos, Piece value);
 
@@ -139,10 +144,37 @@ inline PieceGroup::PieceGroup(PieceGroup::const_iterator it_front, PieceGroup::c
 
 inline void PieceGroup::push_back(Piece val){
     _data[_size++] = val;
+    sort();
 }
 
 inline void PieceGroup::pop_back() {
     if(_size >0) _size--;
+}
+
+inline void PieceGroup::sort(){
+    std::sort(begin(), end(), PieceGroup()); // TODO fix bug with 5 -> 15jolly -> 15jolly -> 3
+    bool numbers_are_consecutive= false;
+    while(end()->isJolly() && size()> 2 && !numbers_are_consecutive )
+    {
+        int i=0;  // change by iterator num
+        iterator it_front = begin();
+        iterator it_back = end();
+
+        while( it_front != it_back && ((it_front->number() == (it_front->isJolly() || (it_front+1)->number() -1)) || (it_front+1)->isJolly()))
+        {
+            i++;
+            it_front++;
+            if (it_front == it_back)  // all numbers are consecutives jolly will be moved at the beggining
+            {
+                numbers_are_consecutive = true;
+            }
+        }
+        if (!numbers_are_consecutive)
+        {
+            insert(i,*end());     //insert joly at the corresponding position
+            this->pop_back();     // remove joly at the end
+        }
+    }
 }
 
 inline void PieceGroup::insert(int pos, Piece value)
@@ -151,6 +183,7 @@ inline void PieceGroup::insert(int pos, Piece value)
         for( int i=(_size-1); i>=pos; i--) { _data[i+1] = _data[i]; }
     }
     _data[pos] = value;
+    _size++;
 }
 
 inline std::pair<PieceGroup, PieceGroup> PieceGroup::split(int pos)

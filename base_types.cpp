@@ -52,7 +52,10 @@ bool isValidNumberSequence(const PieceGroup &gr)
     {
 
          // check colors
-        if( piece.isJolly() ) continue;
+        if( piece.isJolly() ){
+            i++; // un poco cutre, al usar for( : ) no sabia como acceder al contador.
+            continue;
+        }
 
         if( first_color == UNDEFINED){
             first_color = piece.color();
@@ -64,14 +67,13 @@ bool isValidNumberSequence(const PieceGroup &gr)
         }
         // check numbers
         if( first_number == 0){
-            first_number = piece.number();
+            first_number = piece.number() -i;
         }
         else{
             if (first_number != (piece.number() - i) )
                 return false;
         }
-
-        i++; // un poco cutre, al usar for( : ) no sabia como acceder al contador.
+        i++;
 
     }
 

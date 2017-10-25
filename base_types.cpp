@@ -67,17 +67,17 @@ bool isValidNumberSequence(const PieceGroup &gr)
 
 RandomPiecesStack::RandomPiecesStack()
 {
-    _pieces_stack.reserve( 13*4 + 3);
+    _pieces_stack.reserve( 3*( 13*4 + 1) );
 
-    for(uint8_t num=1; num<=13; num++)
+    for(uint8_t j=0; j<3; j++)
     {
-        for( Color col: {BLACK, YELLOW, RED, BLUE} )
+        for(uint8_t num=1; num<=13; num++)
         {
-            _pieces_stack.push_back( Piece(col, num) );
+            for( Color col: {BLACK, YELLOW, RED, BLUE} )
+            {
+                _pieces_stack.push_back( Piece(col, num) );
+            }
         }
-    }
-
-    for(uint8_t j=0; j<3; j++){
         _pieces_stack.push_back(Jolly);
     }
 

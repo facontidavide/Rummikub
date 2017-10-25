@@ -14,6 +14,7 @@ bool isValidColorSequence(const PieceGroup &gr)
 
     bool color_found[4] = { false, false, false, false };
     uint8_t first_number = 0;
+    int i=0;
 
     for(const Piece& piece: gr )
     {
@@ -44,10 +45,13 @@ bool isValidNumberSequence(const PieceGroup &gr)
     if( gr.size() <=2 ) return false;
 
     Color first_color = UNDEFINED;
+    uint8_t first_number = 0;
+    int i=0;
 
-    // check first the colors
-    for(const Piece& piece: gr )
+    for(const Piece& piece: gr ) // http://en.cppreference.com/w/cpp/language/range-for
     {
+
+         // check colors
         if( piece.isJolly() ) continue;
 
         if( first_color == UNDEFINED){
@@ -58,52 +62,62 @@ bool isValidNumberSequence(const PieceGroup &gr)
                 return false;
             }
         }
-    }
-
-    //TODO check the numbers
-    throw std::runtime_error("NOT implemented yet");
-    return false;
-}
-
-RandomPiecesStack::RandomPiecesStack()
-{
-    _pieces_stack.reserve( 13*4 + 3);
-
-    for(uint8_t num=1; num<=13; num++)
-    {
-        for( Color col: {BLACK, YELLOW, RED, BLUE} )
-        {
-            _pieces_stack.push_back( Piece(col, num) );
+        // check numbers
+        if( first_number == 0){
+            first_number = piece.number();
         }
-    }
-
-    for(uint8_t j=0; j<3; j++){
-        _pieces_stack.push_back(Jolly);
-    }
-
-    // http://en.cppreference.com/w/cpp/algorithm/random_shuffle
-    std::random_device rd;
-    std::mt19937 g(rd());
-    std::shuffle( _pieces_stack.begin(), _pieces_stack.end(), g);
-}
-
-Piece RandomPiecesStack::pop_back()
-{
-    if( _pieces_stack.empty() ) return Piece();
-    Piece out = _pieces_stack.back();
-    _pieces_stack.pop_back();
-    return out;
-}
-
-bool RandomPiecesStack::removePiece(Piece p)
-{
-    for (size_t i=0; i< _pieces_stack.size(); i++)
-    {
-        if( p == _pieces_stack[i] )
-        {
-            _pieces_stack.erase( _pieces_stack.begin() + i );
-            return true;
+        else{
+            if (first_number != (piece.number() - i) )
+                return false;
         }
+
+        i++; // un poco cutre, al usar for( : ) no sabia como acceder al contador.
+
     }
-    return false;
+
+   // throw std::runtime_error("NOT implemented yet");
+    return true;
 }
+
+//RandomPiecesStack::RandomPiecesStack()
+//{
+//    _pieces_stack.reserve( 13*4 + 3);
+
+//    for(uint8_t num=1; num<=13; num++)
+//    {
+//        for( Color col: {BLACK, YELLOW, RED, BLUE} )
+//        {
+//            _pieces_stack.push_back( Piece(col, num) );
+//        }
+//    }
+
+//    for(uint8_t j=0; j<3; j++){
+//        _pieces_stack.push_back(Jolly);
+//    }
+
+//    // http://en.cppreference.com/w/cpp/algorithm/random_shuffle
+//    std::random_device rd;
+//    std::mt19937 g(rd());
+//    std::shuffle( _pieces_stack.begin(), _pieces_stack.end(), g);
+//}
+
+//Piece RandomPiecesStack::pop_back()
+//{
+//    if( _pieces_stack.empty() ) return Piece();
+//    Piece out = _pieces_stack.back();
+//    _pieces_stack.pop_back();
+//    return out;
+//}
+
+//bool RandomPiecesStack::removePiece(Piece p)
+//{
+//    for (size_t i=0; i< _pieces_stack.size(); i++)
+//    {
+//        if( p == _pieces_stack[i] )
+//        {
+//            _pieces_stack.erase( _pieces_stack.begin() + i );
+//            return true;
+//        }
+//    }
+//    return false;
+//}

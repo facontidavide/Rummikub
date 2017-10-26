@@ -154,7 +154,8 @@ inline void PieceCombination::push_back(Piece val){
 }
 
 inline void PieceCombination::pop_back() {
-    if(_size >0) _size--;
+    assert( _size >0 );
+    _size--;
 }
 
 inline void PieceCombination::insert(int pos, Piece value)
@@ -164,6 +165,7 @@ inline void PieceCombination::insert(int pos, Piece value)
         for( int i=(_size-1); i>=pos; i--) { _piece[i+1] = _piece[i]; }
     }
     _piece[pos] = value;
+    _size++;
 }
 
 inline std::pair<PieceCombination, PieceCombination> PieceCombination::split(int pos)

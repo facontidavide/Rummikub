@@ -34,7 +34,7 @@ TEST_CASE( "First game", "[Rummikub]" ) {
     player.ownedPieces().push_back( {BLACK, 2});
     player.ownedPieces().push_back( {BLACK, 8});
 
-    // this is a valid solution
+    // this is a valid solution, but it is not 30
     player.ownedPieces().push_back( {RED, 2});
     player.ownedPieces().push_back( {RED, 3});
     player.ownedPieces().push_back( {RED, 4});
@@ -46,8 +46,18 @@ TEST_CASE( "First game", "[Rummikub]" ) {
 
     player.ownedPieces().push_back( {BLUE, 1});
     player.ownedPieces().push_back( {BLUE, 5});
-    player.ownedPieces().push_back( {BLUE, 9});
     player.ownedPieces().push_back( {BLUE, 11});
+    player.ownedPieces().push_back( {BLUE, 12});
 
     bool ret = engine.play( 0, state );
+
+    CHECK( ret == false );
+    CHECK( player.ownedPieces().size() == 14 );
+
+    player.ownedPieces()[11] = {BLUE, 9}; // substitute {BLUE, 5} with {BLUE, 9}
+
+    ret = engine.play( 0, state );
+    CHECK( ret == true );
+    CHECK( player.ownedPieces().size() == 8 );
+
 }

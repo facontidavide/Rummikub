@@ -53,10 +53,10 @@ bool LoadFromFile(const char* filename, GameState& destination_state);
 // Any thread should have its own copy of GameState to avoid concurrency problems.
 class GameEngine{
 public:
-    GameEngine(int num_players);
+    GameEngine();
 
     /// create the initial state.
-    GameState startGame();
+    GameState startGame(int num_players);
 
     /**
      * @brief play   Give a state, a player try to find a solution.
@@ -68,6 +68,9 @@ public:
      */
     bool play(int player_number, GameState& state);
 
+private:
+
+    bool dropCombinationsInYourHand( Player& player, std::vector<PieceCombination>& combinations_on_table);
 };
 
 #endif // GAMEPLAY_H

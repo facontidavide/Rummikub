@@ -14,7 +14,10 @@ add_library(Rummikub
     gameplay.h
     )
 
-add_executable(rummikub-test tests/basic_tests.cpp)
+add_executable(rummikub-test
+    tests/basic_tests.cpp
+    tests/play_tests.cpp
+    )
 target_link_libraries( rummikub-test Rummikub)
 
 add_subdirectory(RummViz)

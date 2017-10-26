@@ -48,6 +48,39 @@ bool RandomPiecesStack::removePiece(Piece p)
 }
 
 
+void PieceCombination::sortByNumber()
+{
+    std::sort( begin(), end(), [](const Piece& a, const Piece& b)
+    {
+       if( a.number() < b.number() ) return true;
+       else{
+           if( a.number() == b.number())
+           {
+               return a.color()< b.color();
+           }
+       }
+       return false;
+    }
+    );
+}
+
+void PieceCombination::sortByColor()
+{
+    std::sort( begin(), end(), [](const Piece& a, const Piece& b)
+    {
+       if( a.color() < b.color() ) return true;
+       else{
+           if( a.color() == b.color())
+           {
+               return a.number()< b.number();
+           }
+       }
+       return false;
+    }
+    );
+}
+
+
 bool PieceCombination::isValidColorSequence() const
 {
     if( size() <=2 ||  size()>=5 ) return false;

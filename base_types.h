@@ -72,6 +72,12 @@ public:
     iterator begin()  { return &_piece[0]; }
     iterator end()    { return &_piece[_size-1]; }
 
+    Piece& front()             { assert( _size >0 ); return _piece[0]; }
+    Piece& back()              { assert( _size >0 ); return _piece[_size-1]; }
+
+    const Piece& front() const { assert( _size >0 ); return _piece[0]; }
+    const Piece& back() const  { assert( _size >0 ); return _piece[_size-1]; }
+
     void push_back(Piece val);
     void pop_back();
 
@@ -81,8 +87,8 @@ public:
 
     uint8_t size() const { return _size; }
 
-    const Piece& operator[](int index) const { return _piece[index]; }
-    Piece& operator[](int index)             { return _piece[index]; }
+    const Piece& operator[](int index) const { assert( index >= 0 && index < _size);  return _piece[index]; }
+    Piece& operator[](int index)             { assert( index >= 0 && index < _size);  return _piece[index]; }
 
     static uint8_t maxSize() { return 13; }
 
@@ -90,6 +96,9 @@ public:
     // and the second the indexes  [pos, size()-1]
     std::pair<PieceCombination,PieceCombination> split(int pos);
 
+    void sortByColor();
+
+    void sortByNumber();
 
     // Note: it is worth using here the design pattern known as "memoization"
 

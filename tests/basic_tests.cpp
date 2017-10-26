@@ -80,75 +80,75 @@ TEST_CASE( "Is Valid Color Sequence", "[Rummikub]" ) {
 TEST_CASE( "Is Valid Number Sequence", "[Rummikub]" ) {
 
     PieceCombination gr;
-    CHECK( gr.isValidColorSequence() == false); // size == 0
+    CHECK( gr.isValidNumberSequence() == false); // size == 0
 
     gr.push_back( Piece(BLACK,5) );
-    CHECK( gr.isValidColorSequence() == false); // size == 1
+    CHECK( gr.isValidNumberSequence() == false); // size == 1
 
     gr.push_back( Piece(BLACK,6) );
-    CHECK( gr.isValidColorSequence() == false); // size == 2
+    CHECK( gr.isValidNumberSequence() == false); // size == 2
 
     gr.push_back( Piece(BLACK,7) );
-    CHECK( gr.isValidColorSequence() == true); // size == 3
+    CHECK( gr.isValidNumberSequence() == true); // size == 3
 
     gr.clear();
     gr.push_back( Piece(YELLOW,1) );
     gr.push_back( Piece(YELLOW,3) );
     gr.push_back( Piece(YELLOW,2) );
     gr.push_back( Piece(YELLOW,4) );
-    CHECK( gr.isValidColorSequence() == true);
+    CHECK( gr.isValidNumberSequence() == true);
 
     gr.clear();
     gr.push_back( Piece(RED,12) );
     gr.push_back( Piece(RED,11) );
     gr.push_back( Piece(RED,13) );
-    CHECK( gr.isValidColorSequence() == true);
+    CHECK( gr.isValidNumberSequence() == true);
 
     gr.clear();
     gr.push_back( Piece(BLUE,5) );
     gr.push_back( Piece(RED, 6) );
     gr.push_back( Piece(BLUE,4) );
-    CHECK( gr.isValidColorSequence() == false); // two blue, one red
+    CHECK( gr.isValidNumberSequence() == false); // two blue, one red
 
     gr.clear();
     gr.push_back( Piece(BLUE,5) );
     gr.push_back( Piece(BLUE,4) );
     gr.push_back( Jolly );
-    CHECK( gr.isValidColorSequence() == true);
+    CHECK( gr.isValidNumberSequence() == true);
     gr.push_back( Piece(BLUE,7) );
-    CHECK( gr.isValidColorSequence() == true);
+    CHECK( gr.isValidNumberSequence() == true);
     gr.push_back( Piece(BLUE,8) );
-    CHECK( gr.isValidColorSequence() == true);
+    CHECK( gr.isValidNumberSequence() == true);
 
     gr.clear();
     gr.push_back( Jolly );
     gr.push_back( Piece(BLUE,5) );
     gr.push_back( Jolly );
     gr.push_back( Piece(BLUE,3) );
-    CHECK( gr.isValidColorSequence() == true);
+    CHECK( gr.isValidNumberSequence() == true);
 
     gr.push_back( Piece(BLUE,6) );
-    CHECK( gr.isValidColorSequence() == true);
+    CHECK( gr.isValidNumberSequence() == true);
 
     gr.push_back( Piece(BLUE,6) );
-    CHECK( gr.isValidColorSequence() == false); // 6 repeated twice
+    CHECK( gr.isValidNumberSequence() == false); // 6 repeated twice
 
     gr.clear();
     gr.push_back( Piece(BLUE,5) );
     gr.push_back( Piece(BLUE,4) );
     gr.push_back( Piece(BLUE,5) );
-    CHECK( gr.isValidColorSequence() == false); // 5 repeated twice
+    CHECK( gr.isValidNumberSequence() == false); // 5 repeated twice
 
     gr.clear();
     gr.push_back( Piece(BLUE,2) );
     gr.push_back( Piece(BLUE,4) );
     gr.push_back( Piece(BLUE,5) );
-    CHECK( gr.isValidColorSequence() == false); // missing 3
+    CHECK( gr.isValidNumberSequence() == false); // missing 3
 
     gr.clear();
     gr.push_back( Piece(YELLOW,2) );
     gr.push_back( Piece(YELLOW,4) );
     gr.push_back( Jolly );
     gr.push_back( Piece(YELLOW,7) );
-    CHECK( gr.isValidColorSequence() == false); // missing 5 or 6
+    CHECK( gr.isValidNumberSequence() == false); // missing 5 or 6
 }

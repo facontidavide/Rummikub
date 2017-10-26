@@ -23,41 +23,43 @@ TEST_CASE( "First game", "[Rummikub]" ) {
     GameEngine engine;
 
     // I will create the state manually, not from the stack of pieces
-    GameState state;
+    GameState state, next_state;
 
     state.players.resize(1);
-    Player& player = state.players[0];
+    std::vector<Piece>& owned_pieces = state.players[0].ownedPieces();
 
-    player.ownedPieces().clear();
+    owned_pieces.clear();
 
-    player.ownedPieces().push_back( {BLACK, 2});
-    player.ownedPieces().push_back( {BLACK, 2});
-    player.ownedPieces().push_back( {BLACK, 8});
+    owned_pieces.push_back( {BLACK, 2});
+    owned_pieces.push_back( {BLACK, 2});
+    owned_pieces.push_back( {BLACK, 8});
 
     // this is a valid solution, but it is not 30
-    player.ownedPieces().push_back( {RED, 2});
-    player.ownedPieces().push_back( {RED, 3});
-    player.ownedPieces().push_back( {RED, 4});
+    owned_pieces.push_back( {RED, 2});
+    owned_pieces.push_back( {RED, 3});
+    owned_pieces.push_back( {RED, 4});
 
-    player.ownedPieces().push_back( {YELLOW, 1});
-    player.ownedPieces().push_back( {YELLOW, 5});
-    player.ownedPieces().push_back( {YELLOW, 7});
-    player.ownedPieces().push_back( {YELLOW, 13});
+    owned_pieces.push_back( {YELLOW, 1});
+    owned_pieces.push_back( {YELLOW, 5});
+    owned_pieces.push_back( {YELLOW, 7});
+    owned_pieces.push_back( {YELLOW, 13});
 
-    player.ownedPieces().push_back( {BLUE, 1});
-    player.ownedPieces().push_back( {BLUE, 5});
-    player.ownedPieces().push_back( {BLUE, 11});
-    player.ownedPieces().push_back( {BLUE, 12});
+    owned_pieces.push_back( {BLUE, 1});
+    owned_pieces.push_back( {BLUE, 5});
+    owned_pieces.push_back( {BLUE, 11});
+    owned_pieces.push_back( {BLUE, 12});
 
-    bool ret = engine.play( 0, state );
+     CHECK( state.players[0].ownedPieces().size() == 14 );
+
+    bool ret = engine.play( 0, state, next_state );
 
     CHECK( ret == false );
-    CHECK( player.ownedPieces().size() == 14 );
+    CHECK( next_state.players[0].ownedPieces().size() == 15 );
 
-    player.ownedPieces()[11] = {BLUE, 9}; // substitute {BLUE, 5} with {BLUE, 9}
+    owned_pieces[11] = {BLUE, 9}; // substitute {BLUE, 5} with {BLUE, 9}
 
-    ret = engine.play( 0, state );
+    ret = engine.play( 0, state, next_state );
     CHECK( ret == true );
-    CHECK( player.ownedPieces().size() == 8 );
+    CHECK( next_state.players[0].ownedPieces().size() == 8 );
 
 }

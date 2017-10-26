@@ -66,7 +66,7 @@ public:
      * @param state            It is both the input and oputput of the funtion.
      * @return                 true if the player did something and the state was changed.
      */
-    bool play(int player_number, GameState& state);
+    bool play(int player_number, const GameState &prev_state, GameState& new_state);
 
 private:
 

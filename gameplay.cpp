@@ -21,16 +21,17 @@ GameState GameEngine::startGame(int num_players)
     return state;
 }
 
-bool GameEngine::play(int player_number, GameState &state)
+bool GameEngine::play(int player_number, const GameState &prev_state, GameState &new_state)
 {
-    Player& player = state.players[0];
+    new_state = prev_state;
+    Player& player = new_state.players[player_number];
 
     if ( player.isFirstTurn() )
     {
-        bool res = dropCombinationsInYourHand(player, state.combinations_on_table );
+        bool res = dropCombinationsInYourHand(player, new_state.combinations_on_table );
         if (res == false)
         {
-            player.ownedPieces().push_back( state.piece_stack.pop_back() );
+            player.ownedPieces().push_back( new_state.piece_stack.pop_back() );
             return false;
         }
     }

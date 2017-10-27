@@ -56,7 +56,7 @@ TEST_CASE( "First game", "[Rummikub]" ) {
     CHECK( ret == false );
     CHECK( next_state.players[0].ownedPieces().size() == 15 );
 
-    owned_pieces[11] = {BLUE, 9}; // substitute {BLUE, 5} with {BLUE, 9}
+    owned_pieces[11] = {BLUE, 10}; // substitute {BLUE, 5} with {BLUE, 10}
 
     ret = engine.play( 0, state, next_state );
     CHECK( ret == true );

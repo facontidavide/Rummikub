@@ -46,7 +46,7 @@ private:
 };
 
 
-const Piece Jolly(JOLLY, 0XFF);
+const Piece Jolly(JOLLY, 0XF);
 
 
 //-------------------------------

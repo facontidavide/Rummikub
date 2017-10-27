@@ -154,13 +154,13 @@ inline void PieceGroup::pop_back() {
 inline void PieceGroup::sort(){
     std::sort(begin(), end(), PieceGroup()); // TODO fix bug with 5 -> 15jolly -> 15jolly -> 3
     bool numbers_are_consecutive= false;
-    while(end()->isJolly() && size()> 2 && !numbers_are_consecutive )
+    while(back()->isJolly() && size()> 2 && !numbers_are_consecutive )
     {
         int i=0;  // change by iterator num
         iterator it_front = begin();
         iterator it_back = end();
 
-        while( it_front != it_back && ((it_front->number() == (it_front->isJolly() || (it_front+1)->number() -1)) || (it_front+1)->isJolly()))
+        while( it_front != it_back && ((it_front->number() ==(it_front+1)->number() -1 || (it_front+1)->isJolly() || (it_front->isJolly() || ))))
         {
             i++;
             it_front++;

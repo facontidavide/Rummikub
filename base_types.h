@@ -65,12 +65,13 @@ public:
 
     PieceCombination(): _size(0) {}
     PieceCombination(const_iterator it_front, const_iterator it_back);
+    PieceCombination(std::initializer_list<Piece> pieces);
 
     const_iterator begin() const { return &_piece[0]; }
     const_iterator end()   const { return &_piece[_size]; }
 
     iterator begin()  { return &_piece[0]; }
-    iterator end()    { return &_piece[_size-1]; }
+    iterator end()    { return &_piece[_size]; }
 
     Piece& front()             { assert( _size >0 ); return _piece[0]; }
     Piece& back()              { assert( _size >0 ); return _piece[_size-1]; }
@@ -102,11 +103,11 @@ public:
 
     // Note: it is worth using here the design pattern known as "memoization"
 
-    bool isValidCombination() const;
+    bool isValidCombination();
 
     bool isValidColorSequence() const;
 
-    bool isValidNumberSequence() const;
+    bool isValidNumberSequence(bool reorder_jolly = true);
 
 private:
     //sizeof(PieceSet) == 14 bytes
@@ -183,7 +184,7 @@ inline std::pair<PieceCombination, PieceCombination> PieceCombination::split(int
              PieceCombination( &_piece[pos], &_piece[_size-1]) };
 }
 
-inline bool PieceCombination::isValidCombination() const
+inline bool PieceCombination::isValidCombination()
 {
     return size() >=3 && (isValidColorSequence() || isValidNumberSequence() );
 }

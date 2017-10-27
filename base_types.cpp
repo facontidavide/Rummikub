@@ -1,6 +1,7 @@
 #include <random>
 #include <algorithm>
 #include <iterator>
+#include <initializer_list>
 #include "base_types.h"
 
 
@@ -64,6 +65,13 @@ void PieceCombination::sortByNumber()
     );
 }
 
+PieceCombination::PieceCombination(std::initializer_list<Piece> pieces):
+    _size(pieces.size())
+{
+    assert( _size <= 13);
+    std::copy( pieces.begin(), pieces.end(), _piece );
+}
+
 void PieceCombination::sortByColor()
 {
     std::sort( begin(), end(), [](const Piece& a, const Piece& b)
@@ -114,30 +122,9 @@ bool PieceCombination::isValidColorSequence() const
     return true;
 }
 
-bool PieceCombination::isValidNumberSequence() const
+bool PieceCombination::isValidNumberSequence(bool reorder_jolly )
 {
     if( size() <=2 ) return false;
 
-    Color first_color = UNDEFINED;
-
-    // check first the colors
-    for(int i=0; i< size(); i++)
-    {
-        Piece piece = _piece[i];
-
-        if( piece.isJolly() ) continue;
-
-        if( first_color == UNDEFINED){
-            first_color = piece.color();
-        }
-        else{
-            if (first_color != piece.color() ) {
-                return false;
-            }
-        }
-    }
-
-    //TODO check the numbers
-    throw std::runtime_error("NOT implemented yet");
-    return false;
+     return true;
 }

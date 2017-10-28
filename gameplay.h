@@ -83,7 +83,7 @@ void dropNumericalCombinations(std::vector<Piece>& playerHand, std::vector<Piece
 // Inline Declarations
 //-----------------------------------------------------------------------------
 
-inline void resetConvinationSearch(uint8_t& validCombFirstPiece, uint8_t& validCombLastPiece) //convination has been stored or is not valid reset iterators.
+inline void resetConvinationSearch(int& validCombFirstPiece, int& validCombLastPiece) //convination has been stored or is not valid reset iterators.
 {
     validCombFirstPiece = -1;
     validCombLastPiece  = -1;

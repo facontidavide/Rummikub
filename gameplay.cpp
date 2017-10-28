@@ -112,8 +112,8 @@ bool GameEngine::dropCombinationsInYourHand(Player &player, std::vector<PieceCom
 void dropColorCombinations( std::vector<Piece>& playerHand, std::vector<PieceCombination>& validCombinations)
 {
     std::sort( playerHand.begin(), playerHand.end(), numberCompare ); // sort by number
-    uint8_t validCombFirstPiece = -1;
-    uint8_t validCombLastPiece = -1;
+    int validCombFirstPiece = -1;
+    int validCombLastPiece = -1;
 
     for(int i=0; i< playerHand.size(); i++)
     {
@@ -145,8 +145,8 @@ void dropColorCombinations( std::vector<Piece>& playerHand, std::vector<PieceCom
 void dropNumericalCombinations( std::vector<Piece>& playerHand, std::vector<PieceCombination>& validCombinations)
 {
     std::sort( playerHand.begin(), playerHand.end(), colorCompare ); // sort by color
-    uint8_t validCombFirstPiece = -1;
-    uint8_t validCombLastPiece = -1;
+    int validCombFirstPiece = -1;
+    int validCombLastPiece = -1;
 
     for(int i=0; i< playerHand.size(); i++)
     {

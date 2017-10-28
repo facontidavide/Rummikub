@@ -48,6 +48,30 @@ private:
 
 const Piece Jolly(JOLLY, 0XF);
 
+inline bool numberCompare( Piece a, Piece b)
+{
+    if( a.number() < b.number() ) return true;
+    else{
+        if( a.number() == b.number())
+        {
+            return a.color()< b.color();
+        }
+    }
+    return false;
+}
+
+inline bool colorCompare( Piece a, Piece b)
+{
+    if( a.color() < b.color() ) return true;
+    else{
+        if( a.color() == b.color())
+        {
+            return a.number()< b.number();
+        }
+    }
+    return false;
+}
+
 
 //-------------------------------
 //TODO:
@@ -96,17 +120,13 @@ public:
     // and the second the indexes  [pos, size()-1]
     std::pair<PieceCombination,PieceCombination> split(int pos);
 
-    void sortByColor();
-
-    void sortByNumber();
-
     // Note: it is worth using here the design pattern known as "memoization"
 
-    bool isValidCombination() const;
+    bool isValidCombination();
 
     bool isValidColorSequence() const;
 
-    bool isValidNumberSequence() const;
+    bool isValidNumberSequence();
 
 private:
     //sizeof(PieceSet) == 14 bytes
@@ -183,7 +203,7 @@ inline std::pair<PieceCombination, PieceCombination> PieceCombination::split(int
              PieceCombination( &_piece[pos], &_piece[_size-1]) };
 }
 
-inline bool PieceCombination::isValidCombination() const
+inline bool PieceCombination::isValidCombination()
 {
     return size() >=3 && (isValidColorSequence() || isValidNumberSequence() );
 }

@@ -65,6 +65,7 @@ void PieceCombination::sortByNumber()
     );
 }
 
+
 PieceCombination::PieceCombination(std::initializer_list<Piece> pieces):
     _size(pieces.size())
 {

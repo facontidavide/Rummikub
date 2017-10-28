@@ -76,6 +76,8 @@ public:
     Piece& front()             { assert( _size >0 ); return _piece[0]; }
     Piece& back()              { assert( _size >0 ); return _piece[_size-1]; }
 
+    void erase(const_iterator first, const_iterator last);
+
     const Piece& front() const { assert( _size >0 ); return _piece[0]; }
     const Piece& back() const  { assert( _size >0 ); return _piece[_size-1]; }
 
@@ -100,6 +102,8 @@ public:
     void sortByColor();
 
     void sortByNumber();
+
+    int getCombinationSumedValue();
 
     // Note: it is worth using here the design pattern known as "memoization"
 
@@ -158,6 +162,16 @@ inline PieceCombination::PieceCombination(PieceCombination::const_iterator it_fr
     }
 }
 
+// TODO implement erase
+// Internal erase functions follow.
+// Called by erase(q1,q2), clear(), resize(), _M_fill_assign,
+// _M_assign_aux.
+inline void erase(PieceCombination::const_iterator __first, PieceCombination::const_iterator __last)
+{
+
+}
+
+
 inline void PieceCombination::push_back(Piece val){
     assert( _size < maxSize() );
     _piece[_size++] = val;
@@ -188,6 +202,8 @@ inline bool PieceCombination::isValidCombination()
 {
     return size() >=3 && (isValidColorSequence() || isValidNumberSequence() );
 }
+
+
 
 #endif // BASE_TYPES_H
 

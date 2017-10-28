@@ -2,26 +2,27 @@
 #define GAMEPLAY_H
 
 #include "base_types.h"
+#include <utility>
 
 class GameEngine;
 
 // any player has a set of Pieces. Whn the size is zero, the player wins
 class Player{
 public:
-    Player(): _first_turn(true) {}
+    Player(): _first_play(true) {}
 
     const std::vector<Piece>& ownedPieces() const { return _owned_pieces; }
 
     std::vector<Piece>& ownedPieces()             { return _owned_pieces; }
 
-    bool isFirstTurn()                      const { return _first_turn; }
+    bool isFirstPlay()                      const { return _first_play; }
 private:
 
     std::vector<Piece> _owned_pieces;
     // the first time the player play, it must
     // do at least 30 points and can not attach to anything until
     // he did.
-    bool _first_turn;
+    bool _first_play;
 
     friend class GameEngine;
 };
@@ -72,5 +73,21 @@ private:
 
     bool dropCombinationsInYourHand( Player& player, std::vector<PieceCombination>& combinations_on_table);
 };
+
+
+
+void dropColorCombinations( std::vector<Piece>& playerHand, std::vector<PieceCombination>& validCombinations);
+void dropNumericalCombinations(std::vector<Piece>& playerHand, std::vector<PieceCombination>& validCombinations);
+
+
+//-----------------------------------------------------------------------------
+// Inline Declarations
+//-----------------------------------------------------------------------------
+
+inline void resetConvinationSearch(uint8_t& validCombFirstPiece, uint8_t& validCombLastPiece) //convination has been stored or is not valid reset iterators.
+{
+    validCombFirstPiece = -1;
+    validCombLastPiece  = -1;
+}
 
 #endif // GAMEPLAY_H

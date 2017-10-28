@@ -55,11 +55,84 @@ TEST_CASE( "First game", "[Rummikub]" ) {
 
     CHECK( ret == false );
     CHECK( next_state.players[0].ownedPieces().size() == 15 );
+    CHECK( next_state.combinations_on_table.size() == 0);
 
     owned_pieces[11] = {BLUE, 10}; // substitute {BLUE, 5} with {BLUE, 10}
 
     ret = engine.play( 0, state, next_state );
     CHECK( ret == true );
     CHECK( next_state.players[0].ownedPieces().size() == 8 );
+    CHECK( next_state.combinations_on_table.size() == 2);
 
+    //-------------------------------------------------
+
+    state.combinations_on_table.clear();
+    owned_pieces.clear();
+    owned_pieces.push_back( {BLACK, 2});
+    owned_pieces.push_back( {BLACK, 2});
+    owned_pieces.push_back( {BLACK, 8});
+
+    owned_pieces.push_back( {RED, 1});
+    owned_pieces.push_back( {RED, 3});
+    owned_pieces.push_back( {RED, 4});
+    owned_pieces.push_back( {RED, 6});
+
+    owned_pieces.push_back( {YELLOW, 1});
+    owned_pieces.push_back( {YELLOW, 5});
+    owned_pieces.push_back( {YELLOW, 7});
+    owned_pieces.push_back( {YELLOW, 13});
+
+    owned_pieces.push_back( Jolly );
+    owned_pieces.push_back( {BLUE, 10});
+    owned_pieces.push_back( {BLUE, 11});
+
+    ret = engine.play( 0, state, next_state );
+
+    // thanks to the Jolly, multiple combinations are possible, but only one is more than 30
+    CHECK( ret == true );
+    CHECK( next_state.players[0].ownedPieces().size() == 11 );
+
+    CHECK( next_state.combinations_on_table.size() == 1);
+    {
+        PieceCombination& comb = next_state.combinations_on_table[0];
+        CHECK( comb.isValidNumberSequence(true) == true ); // reorder too
+        CHECK( comb[0] == Piece(BLUE, 10) );
+        CHECK( comb[1] == Piece(BLUE, 11) );
+        CHECK( comb[2] == Jolly );
+    }
+    //---------------------------------------------
+    state.combinations_on_table.clear();
+    owned_pieces.clear();
+    owned_pieces.push_back( {BLACK, 2});
+    owned_pieces.push_back( {BLACK, 2});
+    owned_pieces.push_back( {BLACK, 8});
+
+    owned_pieces.push_back( {RED, 1});
+    owned_pieces.push_back( {RED, 3});
+    owned_pieces.push_back( {RED, 4});
+    owned_pieces.push_back( {RED, 9});
+
+    owned_pieces.push_back( {YELLOW, 1});
+    owned_pieces.push_back( {YELLOW, 2});
+    owned_pieces.push_back( {YELLOW, 8});
+    owned_pieces.push_back( {YELLOW, 9});
+
+    owned_pieces.push_back( {BLUE, 9} );
+    owned_pieces.push_back( {BLUE, 10});
+    owned_pieces.push_back( {BLUE, 11});
+
+    ret = engine.play( 0, state, next_state );
+
+    // two combination are possible but one is better than the other
+    CHECK( ret == true );
+    CHECK( next_state.players[0].ownedPieces().size() == 11 );
+
+    CHECK( next_state.combinations_on_table.size() == 1);
+    {
+        PieceCombination& comb = next_state.combinations_on_table[0];
+        CHECK( comb.isValidNumberSequence(true) == true ); // reorder too
+        CHECK( comb[0] == Piece(BLUE, 9) );
+        CHECK( comb[1] == Piece(BLUE, 10) );
+        CHECK( comb[2] == Piece(BLUE, 11) );
+    }
 }

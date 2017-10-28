@@ -126,7 +126,7 @@ public:
 
     bool isValidColorSequence() const;
 
-    bool isValidNumberSequence();
+    bool isValidNumberSequence(bool reorder_jolly = false);
 
 private:
     //sizeof(PieceSet) == 14 bytes

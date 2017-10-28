@@ -81,7 +81,7 @@ bool PieceCombination::isValidColorSequence() const
     return true;
 }
 
-bool PieceCombination::isValidNumberSequence()
+bool PieceCombination::isValidNumberSequence(bool reorder_jolly )
 {
     if( size() <=2 ) return false;
 

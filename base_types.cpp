@@ -1,7 +1,5 @@
 #include <random>
 #include <algorithm>
-#include <iterator>
-#include <initializer_list>
 #include "base_types.h"
 
 
@@ -49,47 +47,6 @@ bool RandomPiecesStack::removePiece(Piece p)
 }
 
 
-void PieceCombination::sortByNumber()
-{
-    std::sort( begin(), end(), [](const Piece& a, const Piece& b)
-    {
-       if( a.number() < b.number() ) return true;
-       else{
-           if( a.number() == b.number())
-           {
-               return a.color()< b.color();
-           }
-       }
-       return false;
-    }
-    );
-}
-
-
-PieceCombination::PieceCombination(std::initializer_list<Piece> pieces):
-    _size(pieces.size())
-{
-    assert( _size <= 13);
-    std::copy( pieces.begin(), pieces.end(), _piece );
-}
-
-void PieceCombination::sortByColor()
-{
-    std::sort( begin(), end(), [](const Piece& a, const Piece& b)
-    {
-       if( a.color() < b.color() ) return true;
-       else{
-           if( a.color() == b.color())
-           {
-               return a.number()< b.number();
-           }
-       }
-       return false;
-    }
-    );
-}
-
-
 bool PieceCombination::isValidColorSequence() const
 {
     if( size() <=2 ||  size()>=5 ) return false;
@@ -127,5 +84,9 @@ bool PieceCombination::isValidNumberSequence(bool reorder_jolly )
 {
     if( size() <=2 ) return false;
 
-     return true;
+    std::sort( begin(), end(), numberCompare );
+
+    //TODO check the numbers
+    throw std::runtime_error("NOT implemented yet");
+    return false;
 }

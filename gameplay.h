@@ -75,7 +75,6 @@ private:
 };
 
 
-
 void dropColorCombinations( std::vector<Piece>& playerHand, std::vector<PieceCombination>& validCombinations);
 void dropNumericalCombinations(std::vector<Piece>& playerHand, std::vector<PieceCombination>& validCombinations);
 
@@ -89,5 +88,14 @@ inline void resetConvinationSearch(uint8_t& validCombFirstPiece, uint8_t& validC
     validCombFirstPiece = -1;
     validCombLastPiece  = -1;
 }
+
+inline void pushAllCombinations(std::vector<PieceCombination>& validCombinations, std::vector<PieceCombination> &combinations_on_table)
+{
+    for( PieceCombination comb : validCombinations)
+    {
+        combinations_on_table.push_back(comb);
+    }
+}
+
 
 #endif // GAMEPLAY_H

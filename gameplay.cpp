@@ -33,7 +33,6 @@ bool GameEngine::play(int player_number, const GameState &prev_state, GameState 
        return false;
     }
 
-
     // not implemented yet
     return false;
 }
@@ -62,13 +61,14 @@ bool GameEngine::dropCombinationsInYourHand(Player &player, std::vector<PieceCom
 
     // step2 dropNum --> dropColors
     playerHand.clear();
-    playerHand(player.ownedPieces()); // TODO check this
+    playerHand = player.ownedPieces(); // TODO check this
 
     dropNumericalCombinations(playerHand, validCombinations);
     dropColorCombinations(playerHand, validCombinations);
 
     int combinationsPieces = 0;
     int combinationsValue = 0;
+
     for( PieceCombination comb : validCombinations)
     {
         combinationsPieces+=comb.size();
@@ -88,20 +88,21 @@ bool GameEngine::dropCombinationsInYourHand(Player &player, std::vector<PieceCom
             combinationIsValid = true;
         if (combinationIsValid && OldcombinationIsValid) // both valid select the best one
         {
-            (oldCombinationsPieces > combinationsPieces) ? (play = oldCombinationsPieces) : (play = combinationsPieces);
+
+            (oldCombinationsPieces > combinationsPieces) ? ( pushAllCombinations(oldValidCombinations, combinations_on_table)) : (pushAllCombinations(validCombinations, combinations_on_table));
             player._first_play = false; // firts turn is no more  TODo implement setfirtsvalue
             return true;
         }
         else if(combinationIsValid || OldcombinationIsValid)
         {
-             (OldcombinationIsValid) ? (play = oldCombinationsPieces) : (play = combinationsPieces);
+             (OldcombinationIsValid) ?( pushAllCombinations(oldValidCombinations, combinations_on_table)) : (pushAllCombinations(validCombinations, combinations_on_table));
               player._first_play = false; // firts turn is no more
               return true;
         }
     }
     else
     {
-        (oldCombinationsPieces > combinationsPieces) ? (play = oldCombinationsPieces) : (play = combinationsPieces);
+        (oldCombinationsPieces > combinationsPieces) ? ( pushAllCombinations(oldValidCombinations, combinations_on_table)) : (pushAllCombinations(validCombinations, combinations_on_table));
         return true;
     }
 
@@ -110,7 +111,7 @@ bool GameEngine::dropCombinationsInYourHand(Player &player, std::vector<PieceCom
 
 void dropColorCombinations( std::vector<Piece>& playerHand, std::vector<PieceCombination>& validCombinations)
 {
-    playerHand.sortByNumber();
+    std::sort( playerHand.begin(), playerHand.end(), numberCompare ); // sort by number
     uint8_t validCombFirstPiece = -1;
     uint8_t validCombLastPiece = -1;
 
@@ -143,7 +144,7 @@ void dropColorCombinations( std::vector<Piece>& playerHand, std::vector<PieceCom
 
 void dropNumericalCombinations( std::vector<Piece>& playerHand, std::vector<PieceCombination>& validCombinations)
 {
-    playerHand.sortByColor();
+    std::sort( playerHand.begin(), playerHand.end(), colorCompare ); // sort by color
     uint8_t validCombFirstPiece = -1;
     uint8_t validCombLastPiece = -1;
 
@@ -173,7 +174,6 @@ void dropNumericalCombinations( std::vector<Piece>& playerHand, std::vector<Piec
             resetConvinationSearch(validCombFirstPiece, validCombLastPiece);
     }
 }
-
 
 
 

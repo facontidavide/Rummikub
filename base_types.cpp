@@ -48,39 +48,6 @@ bool RandomPiecesStack::removePiece(Piece p)
 }
 
 
-void PieceCombination::sortByNumber()
-{
-    std::sort( begin(), end(), [](const Piece& a, const Piece& b)
-    {
-       if( a.number() < b.number() ) return true;
-       else{
-           if( a.number() == b.number())
-           {
-               return a.color()< b.color();
-           }
-       }
-       return false;
-    }
-    );
-}
-
-void PieceCombination::sortByColor()
-{
-    std::sort( begin(), end(), [](const Piece& a, const Piece& b)
-    {
-       if( a.color() < b.color() ) return true;
-       else{
-           if( a.color() == b.color())
-           {
-               return a.number()< b.number();
-           }
-       }
-       return false;
-    }
-    );
-}
-
-
 bool PieceCombination::isValidColorSequence() const
 {
     if( size() <=2 ||  size()>=5 ) return false;
@@ -114,28 +81,11 @@ bool PieceCombination::isValidColorSequence() const
     return true;
 }
 
-bool PieceCombination::isValidNumberSequence() const
+bool PieceCombination::isValidNumberSequence()
 {
     if( size() <=2 ) return false;
 
-    Color first_color = UNDEFINED;
-
-    // check first the colors
-    for(int i=0; i< size(); i++)
-    {
-        Piece piece = _piece[i];
-
-        if( piece.isJolly() ) continue;
-
-        if( first_color == UNDEFINED){
-            first_color = piece.color();
-        }
-        else{
-            if (first_color != piece.color() ) {
-                return false;
-            }
-        }
-    }
+    std::sort( begin(), end(), numberCompare );
 
     //TODO check the numbers
     throw std::runtime_error("NOT implemented yet");

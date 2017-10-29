@@ -176,7 +176,8 @@ inline bool Piece::operator !=(const Piece &other) const
 inline uint PieceCombination::getCombinationSumedValue()
 {
     uint sumValue = 0 ;
-    for(Piece piece : PieceCombination() ){ sumValue+= piece.number();}
+    for (size_t i=0; i< size(); i++){ sumValue+= _piece[i].number();}
+   // for(Piece piece : PieceCombination() ){ sumValue+= piece.number();}
 
     return(sumValue);
 }

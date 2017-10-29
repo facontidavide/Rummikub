@@ -87,6 +87,8 @@ bool PieceCombination::isValidNumberSequence(bool reorder_jolly )
     std::sort( begin(), end(), numberCompare );
 
     //TODO check the numbers
+
+
     throw std::runtime_error("NOT implemented yet");
     return false;
 }

@@ -33,14 +33,12 @@ bool GameEngine::play(int player_number, const GameState &prev_state, GameState 
        return false;
     }
 
-    // not implemented yet
-    return false;
+    return true;
 }
 
 bool GameEngine::dropCombinationsInYourHand(Player &player, std::vector<PieceCombination> &combinations_on_table)
 {
     std::vector<Piece> playerHand(player.ownedPieces());
-
     std::vector<PieceCombination> validCombinations;
     validCombinations.reserve(3); // improbable more than 3 combinations.
 
@@ -60,6 +58,7 @@ bool GameEngine::dropCombinationsInYourHand(Player &player, std::vector<PieceCom
     oldValidCombinations = std::move (validCombinations);
 
     // step2 dropNum --> dropColors
+    std::vector<Piece> oldPlayerHand(playerHand);
     playerHand.clear();
     playerHand = player.ownedPieces(); // TODO check this
 
@@ -90,20 +89,30 @@ bool GameEngine::dropCombinationsInYourHand(Player &player, std::vector<PieceCom
         {
 
             (oldCombinationsPieces > combinationsPieces) ? ( pushAllCombinations(oldValidCombinations, combinations_on_table)) : (pushAllCombinations(validCombinations, combinations_on_table));
+            player._owned_pieces.clear();
+            (oldCombinationsPieces > combinationsPieces) ? ( player._owned_pieces = oldPlayerHand ) : (player._owned_pieces = playerHand);
             player._first_play = false; // firts turn is no more  TODo implement setfirtsvalue
             return true;
         }
         else if(combinationIsValid || OldcombinationIsValid)
         {
+
              (OldcombinationIsValid) ?( pushAllCombinations(oldValidCombinations, combinations_on_table)) : (pushAllCombinations(validCombinations, combinations_on_table));
+             player._owned_pieces.clear();
+             (OldcombinationIsValid) ?( player._owned_pieces = oldPlayerHand ) : (player._owned_pieces = playerHand);
               player._first_play = false; // firts turn is no more
               return true;
         }
     }
     else
     {
-        (oldCombinationsPieces > combinationsPieces) ? ( pushAllCombinations(oldValidCombinations, combinations_on_table)) : (pushAllCombinations(validCombinations, combinations_on_table));
-        return true;
+        if(oldCombinationsPieces>0 || combinationsPieces>0)
+        {
+            (oldCombinationsPieces > combinationsPieces) ? ( pushAllCombinations(oldValidCombinations, combinations_on_table)) : (pushAllCombinations(validCombinations, combinations_on_table));
+            player._owned_pieces.clear();
+            (oldCombinationsPieces > combinationsPieces) ? ( player._owned_pieces = oldPlayerHand ) : (player._owned_pieces = playerHand);
+            return true;
+        }
     }
 
     return false;
@@ -121,15 +130,18 @@ void dropColorCombinations( std::vector<Piece>& playerHand, std::vector<PieceCom
         const auto& nextNumber = playerHand[i+1].number();
 
         if(currNumber == nextNumber) // posible convinantion keep iterating
-            if(validCombFirstPiece==-1)
+            if(validCombFirstPiece == -1)
                 validCombFirstPiece = i;
             else
                 validCombLastPiece = i;
-        else if((validCombLastPiece - validCombFirstPiece) > 2) // valid convination
+        else if((validCombLastPiece - validCombFirstPiece) >= 2) // valid convination
         {
             PieceCombination validComb;
-            std::move ( playerHand.begin()+validCombFirstPiece, playerHand.begin()+validCombLastPiece, validComb.begin() );
-            playerHand.erase (playerHand.begin()+validCombFirstPiece, playerHand.begin()+validCombLastPiece); // delete used pieces
+            for(i=validCombFirstPiece; i <=validCombFirstPiece; i++ )
+            {
+                validComb.push_back(playerHand[i]);
+            }
+            playerHand.erase (playerHand.begin()+validCombFirstPiece, playerHand.begin() + validCombLastPiece +1); // delete used pieces
 
             assert(validComb.isValidCombination()); validCombinations.push_back(validComb); //msoler @davide so cool right?
 
@@ -157,14 +169,19 @@ void dropNumericalCombinations( std::vector<Piece>& playerHand, std::vector<Piec
             if(validCombFirstPiece==-1)
                 validCombFirstPiece = i;
             else
-                validCombLastPiece = i;
-        else if((validCombLastPiece - validCombFirstPiece) > 2) // valid convination
+                validCombLastPiece = i + 1;
+        else if((validCombLastPiece - validCombFirstPiece) >= 2) // valid convination
         {
             PieceCombination validComb;
-            std::move ( playerHand.begin()+validCombFirstPiece, playerHand.begin()+validCombLastPiece, validComb.begin() );
-            playerHand.erase (playerHand.begin()+validCombFirstPiece, playerHand.begin()+validCombLastPiece); // delete used pieces
+            for(i=validCombFirstPiece; i <=validCombLastPiece; i++ )
+            {
+                validComb.push_back(playerHand[i]);
+            }
 
-            assert(validComb.isValidCombination()); validCombinations.push_back(validComb); //msoler @davide so cool right?
+            playerHand.erase (playerHand.begin()+validCombFirstPiece, playerHand.begin()+ validCombLastPiece + 1); // delete used pieces
+
+            //assert(validComb.isValidCombination()); validCombinations.push_back(validComb); //msoler @davide so cool right?
+            validCombinations.push_back(validComb);
 
             // playerHand has been shrinked iteratiors no longer valid, reset
             resetConvinationSearch(validCombFirstPiece, validCombLastPiece);

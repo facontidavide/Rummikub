@@ -139,6 +139,15 @@ private:
    uint8_t _size;
 };
 
+// This template function works with both std::vector<Pieces> and PieceCombination
+template <typename T> int countJolly(const T& pieces)
+{
+    // http://en.cppreference.com/w/cpp/algorithm/count
+
+    // don't do sort if you don't need to
+   return  std::count_if( pieces.begin(), pieces.end(),
+                          [](const Piece& p) {return p.isJolly();} );
+}
 
 class RandomPiecesStack
 {

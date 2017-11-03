@@ -193,14 +193,6 @@ void dropNumericalCombinations( std::vector<Piece>& playerHand, std::vector<Piec
     }
 }
 
-inline int countJolly(const std::vector<Piece>& playerHand)
-{
-    // http://en.cppreference.com/w/cpp/algorithm/count
-
-    // don't do sort if you don't need to
-   return  std::count_if( playerHand.begin(), playerHand.end(),
-                          [](const Piece& p) {return p.isJolly();} );
-}
 
 int dropJollyColorCombinations( std::vector<Piece>& playerHand, std::vector<PieceCombination>& validCombinations, const Player &player)
 {

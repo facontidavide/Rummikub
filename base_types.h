@@ -19,7 +19,7 @@ enum Color{
 
 class Piece{
 public:
-    Piece(): _data({UNDEFINED,0}) {}
+    Piece(): _data({UNDEFINED,15}) {}
     Piece(Color col, uint8_t value): _data( { static_cast<uint8_t>(col),value} ) {}
 
     Color color() const    { return static_cast<Color>(_data.col); }
@@ -124,7 +124,7 @@ public:
     
     uint getCombinationSumedValue();
 
-    // Note: it is worth using here the design pattern known as "memoization"
+    // Note: it is worth using here the design pattern known as "memorization"
 
     bool isValidCombination();
 
@@ -177,7 +177,7 @@ inline uint PieceCombination::getCombinationSumedValue()
 {
     uint sumValue = 0 ;
     for (size_t i=0; i< size(); i++){ sumValue+= _piece[i].number();}
-   // for(Piece piece : PieceCombination() ){ sumValue+= piece.number();}
+    //for(Piece piece : PieceCombination() ){ sumValue+= piece.number();} // TODO why this doesn't work
 
     return(sumValue);
 }

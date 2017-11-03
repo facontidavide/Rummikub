@@ -96,7 +96,7 @@ public:
     const_iterator end()   const { return &_piece[_size]; }
 
     iterator begin()  { return &_piece[0]; }
-    iterator end()    { return &_piece[_size-1]; }
+    iterator end()    { return &_piece[_size]; }
 
     Piece& front()             { assert( _size >0 ); return _piece[0]; }
     Piece& back()              { assert( _size >0 ); return _piece[_size-1]; }

@@ -196,8 +196,7 @@ void dropNumericalCombinations( std::vector<Piece>& playerHand, std::vector<Piec
 
 int dropJollyColorCombinations( std::vector<Piece>& playerHand, std::vector<PieceCombination>& validCombinations, const Player &player)
 {
-    // std::sort( playerHand.begin(), playerHand.end(), numberCompare ); // sort by number
-
+    std::sort( playerHand.begin(), playerHand.end(), numberCompare ); // sort by number
     int jollyPieces = countJolly(playerHand);
 
     if (jollyPieces==0)
@@ -207,14 +206,13 @@ int dropJollyColorCombinations( std::vector<Piece>& playerHand, std::vector<Piec
     int validCombFirstPiece = -1;
     int validCombFirstNumber =-1;
     int validCombLastPiece = -1;
-    int initialJollyPieces = jollyPieces;
     int jollyPose= -1;
 
-    for(uint i=lastNonJollyNumber; i >= 0; i--)
+    for(uint i=lastNonJollyNumber; i > 0; i--)
     {
         const auto& currNumber = playerHand[i].number();
 
-        if(validCombFirstNumber== -1)  // firts number of the possible series
+        if(validCombFirstNumber== -1 )  // firts number of the possible series
         {
             validCombFirstPiece = i;
             validCombFirstNumber = currNumber;
@@ -223,7 +221,7 @@ int dropJollyColorCombinations( std::vector<Piece>& playerHand, std::vector<Piec
         {
                 validCombLastPiece = i;
         }
-        else if((validCombFirstPiece - validCombLastPiece ) >= 2)        // valid convination
+        else if((validCombFirstPiece - validCombLastPiece ) >= 2 && validCombLastPiece != -1)        // valid convination
         {
             PieceCombination validComb;
             for(i=validCombLastPiece; i <=validCombFirstPiece; i++ )
@@ -239,13 +237,12 @@ int dropJollyColorCombinations( std::vector<Piece>& playerHand, std::vector<Piec
             resetConvinationSearch(validCombFirstPiece, validCombLastPiece, validCombFirstNumber);
             i= playerHand.size() - 1 - jollyPieces; //start again look for more valid combinations
         }
-        else if((validCombFirstPiece - validCombLastPiece ) >= 1 && jollyPieces > 0) // use jolly at the end
+        else if((validCombFirstPiece - validCombLastPiece ) >= 1 && jollyPieces > 0 && validCombLastPiece != -1) // use jolly at the end
         {
             validCombFirstPiece ++;
             jollyPose = validCombFirstPiece;
             jollyPieces--;
-            // std::rotate( ForwardIt first, ForwardIt n_first, ForwardIt last );   // move the jolly use rotate
-            //std::rotate( first,  n_first,  last );   // move the jolly use rotate
+            std::rotate( playerHand.begin() + i, playerHand.end()-1, playerHand.end() );   // move the jolly
             i++; // repeat the loop to save it in valid convination
         }
         else  // not valid convinantion
@@ -272,7 +269,7 @@ int dropJollyNumbericalCombinations( std::vector<Piece>& playerHand, std::vector
     int jollyPose= -1;
 
     // step 1  backwards
-    for(uint i=lastNonJollyNumber; i >= 0; i--)                          // try to make conbinations with jolly
+    for(uint i=lastNonJollyNumber; i > 0; i--)                          // try to make conbinations with jolly
     {
         const auto& currNumber = playerHand[i].number();
 
@@ -287,14 +284,11 @@ int dropJollyNumbericalCombinations( std::vector<Piece>& playerHand, std::vector
         }
         else if( (currNumber ==  validCombFirstNumber - i -1) && jollyPieces > 0 )   // use jolly in the middle
         {
-            jollyPose = i;
             jollyPieces--;
-            // move the jolly use swap
-
-
+            std::rotate( playerHand.begin() + i, playerHand.end()-1, playerHand.end() );   // move the jolly
             validCombFirstPiece ++;       // when inserting the jolly the first piece has been moved back
         }
-        else if((validCombFirstPiece - validCombLastPiece ) >= 2)        // valid convination
+        else if((validCombFirstPiece - validCombLastPiece ) >= 2 && validCombLastPiece != -1)        // valid convination
         {
             PieceCombination validComb;
             for(i=validCombLastPiece; i <=validCombFirstPiece; i++ )
@@ -310,12 +304,12 @@ int dropJollyNumbericalCombinations( std::vector<Piece>& playerHand, std::vector
             resetConvinationSearch(validCombFirstPiece, validCombLastPiece, validCombFirstNumber);
             i= playerHand.size() - 1 - jollyPieces; //start again look for more valid combinations
         }
-        else if((validCombFirstPiece - validCombLastPiece ) >= 1 && jollyPieces > 0) // use jolly at the end
+        else if((validCombFirstPiece - validCombLastPiece ) >= 1 && jollyPieces > 0 && validCombLastPiece != -1) // use jolly at the end
         {
             validCombFirstPiece ++;
             jollyPose = validCombFirstPiece;
             jollyPieces--;
-            // move the jolly use swap
+            std::rotate( playerHand.begin() + jollyPose, playerHand.end()-1, playerHand.end() );   // move the jolly
             i++; // repeat the loop
         }
         else  // not valid convinantion
@@ -350,12 +344,10 @@ int dropJollyNumbericalCombinations( std::vector<Piece>& playerHand, std::vector
         {
                 validCombLastPiece = i;
         }
-        else if( (currNumber ==  validCombFirstNumber + i+1) && jollyPieces > 0 )   // use jolly in the middle
+        else if( (currNumber ==  validCombFirstNumber + i+1) && jollyPieces > 0 && validCombLastPiece != -1)   // use jolly in the middle
         {
-            jollyPose = i;
+            std::rotate( playerHand.begin() + i, playerHand.end()-1, playerHand.end() );   // move the jolly
             jollyPieces--;
-            // move the jolly use swap
-
             validCombLastPiece ++;       // when inserting the jolly the last piece has been moved
         }
         else if((validCombLastPiece - validCombFirstPiece) >= 2)        // valid convination
@@ -374,12 +366,12 @@ int dropJollyNumbericalCombinations( std::vector<Piece>& playerHand, std::vector
             resetConvinationSearch(validCombFirstPiece, validCombLastPiece, validCombFirstNumber);
             i = 0;
         }
-        else if((validCombLastPiece - validCombFirstPiece) >= 1 && jollyPieces > 0) // use jolly at the end
+        else if((validCombLastPiece - validCombFirstPiece) >= 1 && jollyPieces > 0 && validCombLastPiece != -1) // use jolly at the end
         {
             validCombLastPiece ++;
             jollyPose = validCombLastPiece;
             jollyPieces--;
-            // move the jolly use swap
+            std::rotate( playerHand.begin() + jollyPose, playerHand.end()-1, playerHand.end() );   // move the jolly
             i++; // repeat the loop
         }
         else  // not valid convinantion

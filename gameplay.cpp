@@ -193,19 +193,13 @@ void dropNumericalCombinations( std::vector<Piece>& playerHand, std::vector<Piec
     }
 }
 
+
 int dropJollyColorCombinations( std::vector<Piece>& playerHand, std::vector<PieceCombination>& validCombinations, const Player &player)
 {
-    std::sort( playerHand.begin(), playerHand.end(), numberCompare ); // sort by number
+    // std::sort( playerHand.begin(), playerHand.end(), numberCompare ); // sort by number
 
-    int jollyPieces=0;
-    for(int i=playerHand.size() - 1; i >= 0; i--) // try to make conbinations with
-    {
-        const auto& currPiece = playerHand[i];
-        if(currPiece.isJolly())
-            jollyPieces++;
-        else
-            break;
-    }
+    int jollyPieces = countJolly(playerHand);
+
     if (jollyPieces==0)
         return 0; // not jolly pieces.
 
@@ -251,7 +245,7 @@ int dropJollyColorCombinations( std::vector<Piece>& playerHand, std::vector<Piec
             jollyPose = validCombFirstPiece;
             jollyPieces--;
             // std::rotate( ForwardIt first, ForwardIt n_first, ForwardIt last );   // move the jolly use rotate
-            std::rotate( first,  n_first,  last );   // move the jolly use rotate
+            //std::rotate( first,  n_first,  last );   // move the jolly use rotate
             i++; // repeat the loop to save it in valid convination
         }
         else  // not valid convinantion
@@ -265,15 +259,8 @@ int dropJollyNumbericalCombinations( std::vector<Piece>& playerHand, std::vector
 {
     std::sort( playerHand.begin(), playerHand.end(), colorCompare ); // sort by color
 
-    int jollyPieces=0;
-    for(int i = playerHand.size() - 1; i >= 0; i--) // try to make conbinations with
-    {
-        const auto& currPiece = playerHand[i];
-        if(currPiece.isJolly())
-            jollyPieces++;
-        else
-            break;
-    }
+    int jollyPieces = countJolly(playerHand);
+
     if (jollyPieces==0)
         return 0; // not jolly pieces.
 

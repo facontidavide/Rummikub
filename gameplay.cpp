@@ -129,8 +129,12 @@ void dropColorCombinations( std::vector<Piece>& playerHand, std::vector<PieceCom
     {
         const auto& currNumber = playerHand[i].number();
         const auto& nextNumber = playerHand[i+1].number();
+        const auto& currColor = playerHand[i].color();
+        const auto& nextColor = playerHand[i+1].color();
 
-        if(currNumber == nextNumber) // posible convinantion keep iterating
+
+
+        if(currNumber == nextNumber && currColor != nextColor) // posible convinantion keep iterating
             if(validCombFirstPiece == -1)
                 validCombFirstPiece = i;
             else
@@ -205,19 +209,16 @@ int dropJollyColorCombinations( std::vector<Piece>& playerHand, std::vector<Piec
     uint lastNonJollyNumber = playerHand.size() - 1 - jollyPieces ;
     int validCombFirstPiece = -1;
     int validCombFirstNumber =-1;
+    int validCombFirstColor =-1;
     int validCombLastPiece = -1;
     int jollyPose= -1;
 
     for(uint i=lastNonJollyNumber; i > 0; i--)
     {
         const auto& currNumber = playerHand[i].number();
+        const auto& currColor = playerHand[i].color();
 
-        if(validCombFirstNumber== -1 )  // firts number of the possible series
-        {
-            validCombFirstPiece = i;
-            validCombFirstNumber = currNumber;
-        }
-        else if(currNumber ==  validCombFirstNumber) // posible convinantion keep iterating
+        if(currNumber ==  validCombFirstNumber && currColor != validCombFirstColor ) // posible convinantion keep iterating
         {
                 validCombLastPiece = i;
         }
@@ -229,12 +230,14 @@ int dropJollyColorCombinations( std::vector<Piece>& playerHand, std::vector<Piec
                 validComb.push_back(playerHand[i]);
             }
 
-            playerHand.erase (playerHand.begin()+validCombFirstPiece, playerHand.begin()+ validCombLastPiece + 1);  // delete used pieces
+            //playerHand.erase (playerHand.begin()+validCombFirstPiece, playerHand.begin()+ validCombLastPiece + 1);  // delete used pieces
+             playerHand.erase (playerHand.begin()+ validCombLastPiece, playerHand.begin()+ validCombFirstPiece + 1);
             //assert(validComb.isValidCombination()); validCombinations.push_back(validComb);  //TODO implement isValidsequenceNumber
             validCombinations.push_back(validComb);
 
             // playerHand has been shrinked iteratiors no longer valid, reset
             resetConvinationSearch(validCombFirstPiece, validCombLastPiece, validCombFirstNumber);
+            validCombFirstColor = -1;
             i= playerHand.size() - 1 - jollyPieces; //start again look for more valid combinations
         }
         else if((validCombFirstPiece - validCombLastPiece ) >= 1 && jollyPieces > 0 && validCombLastPiece != -1) // use jolly at the end
@@ -246,7 +249,12 @@ int dropJollyColorCombinations( std::vector<Piece>& playerHand, std::vector<Piec
             i++; // repeat the loop to save it in valid convination
         }
         else  // not valid convinantion
+        {
             resetConvinationSearch(validCombFirstPiece, validCombLastPiece, validCombFirstNumber);
+            validCombFirstPiece = i;
+            validCombFirstNumber = currNumber;
+            validCombFirstColor = currColor;
+        }
     }
 
     return jollyPieces;
@@ -273,12 +281,7 @@ int dropJollyNumbericalCombinations( std::vector<Piece>& playerHand, std::vector
     {
         const auto& currNumber = playerHand[i].number();
 
-        if(validCombFirstNumber== -1)  // firts number of the possible series
-        {
-            validCombFirstPiece = i;
-            validCombFirstNumber = currNumber;
-        }
-        else if(currNumber ==  validCombFirstNumber - i) // posible convinantion keep iterating
+        if(currNumber + validCombFirstPiece ==  validCombFirstNumber + i) // posible convinantion keep iterating
         {
                 validCombLastPiece = i;
         }
@@ -296,7 +299,7 @@ int dropJollyNumbericalCombinations( std::vector<Piece>& playerHand, std::vector
                 validComb.push_back(playerHand[i]);
             }
 
-            playerHand.erase (playerHand.begin()+validCombFirstPiece, playerHand.begin()+ validCombLastPiece + 1);  // delete used pieces
+            playerHand.erase (playerHand.begin()+ validCombLastPiece, playerHand.begin()+ validCombFirstPiece + 1);  // delete used pieces
             //assert(validComb.isValidCombination()); validCombinations.push_back(validComb);  //TODO implement isValidsequenceNumber
             validCombinations.push_back(validComb);
 
@@ -313,7 +316,11 @@ int dropJollyNumbericalCombinations( std::vector<Piece>& playerHand, std::vector
             i++; // repeat the loop
         }
         else  // not valid convinantion
+        {
             resetConvinationSearch(validCombFirstPiece, validCombLastPiece, validCombFirstNumber);
+            validCombFirstPiece = i;
+            validCombFirstNumber = currNumber;
+        }
     }
 
     if(player.isFirstPlay())  // just take to highest possible combinations skip forwards iteration.
@@ -335,12 +342,7 @@ int dropJollyNumbericalCombinations( std::vector<Piece>& playerHand, std::vector
     {
         const auto& currNumber = playerHand[i].number();
 
-        if(validCombFirstNumber== -1)  // firts number of the possible series
-        {
-            validCombFirstPiece = i;
-            validCombFirstNumber = currNumber;
-        }
-        else if(currNumber ==  validCombFirstNumber + i) // posible convinantion keep iterating
+         if(currNumber + i ==  validCombFirstNumber + validCombFirstPiece)  // posible convinantion keep iterating
         {
                 validCombLastPiece = i;
         }
@@ -375,7 +377,11 @@ int dropJollyNumbericalCombinations( std::vector<Piece>& playerHand, std::vector
             i++; // repeat the loop
         }
         else  // not valid convinantion
-           resetConvinationSearch(validCombFirstPiece, validCombLastPiece, validCombFirstNumber);
+        {
+            resetConvinationSearch(validCombFirstPiece, validCombLastPiece, validCombFirstNumber);
+            validCombFirstPiece = i;
+            validCombFirstNumber = currNumber;
+        }
     }
 
     // select the best combination

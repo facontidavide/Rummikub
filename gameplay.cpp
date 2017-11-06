@@ -26,7 +26,7 @@ bool GameEngine::play(int player_number, const GameState &prev_state, GameState 
     new_state = prev_state;
     Player& player = new_state.players[player_number];
 
-    if ( player.isFirstTurn() )
+    if ( player.isFirstPlay() )
     {
         bool res = dropCombinationsInYourHand(player, new_state.combinations_on_table );
         if (res == false)

@@ -136,3 +136,95 @@ TEST_CASE( "First game", "[Rummikub]" ) {
         CHECK( comb[2] == Piece(BLUE, 11) );
     }
 }
+
+TEST_CASE( "dropNumericalCombinations", "[Rummikub]" )
+{
+    GameEngine engine;
+
+    // I will create the state manually, not from the stack of pieces
+    GameState state, next_state;
+
+    state.players.resize(1);
+    std::vector<Piece>& owned_pieces = state.players[0].ownedPieces();
+    std::vector<PieceCombination> validCombinations;
+
+    owned_pieces.clear();
+    validCombinations.clear();
+    owned_pieces.push_back( {BLACK, 2});
+    owned_pieces.push_back( {BLACK, 2});
+    owned_pieces.push_back( {RED, 2});
+
+    dropNumericalCombinations(owned_pieces, validCombinations);
+    CHECK( validCombinations.size() == 0 );
+    CHECK( owned_pieces.size() == 3 );
+
+    owned_pieces.clear();
+    validCombinations.clear();
+    owned_pieces.push_back( {BLACK, 3});
+    owned_pieces.push_back( {BLUE, 3});
+    owned_pieces.push_back( {RED, 4});
+
+    dropNumericalCombinations(owned_pieces, validCombinations);
+    CHECK( validCombinations.size() == 0 );
+    CHECK( owned_pieces.size() == 3 );
+
+    owned_pieces.clear();
+    validCombinations.clear();
+    owned_pieces.push_back( {BLACK, 3});
+    owned_pieces.push_back( {BLUE, 3});
+    owned_pieces.push_back( {RED, 3});
+
+    dropNumericalCombinations(owned_pieces, validCombinations);
+    CHECK( validCombinations.size() == 0 ); // color combination not numerical
+
+    owned_pieces.clear();
+    validCombinations.clear();
+    owned_pieces.push_back( {BLACK, 3});
+    owned_pieces.push_back( {BLUE, 3});
+    owned_pieces.push_back( {RED, 3});
+
+    dropColorCombinations(owned_pieces, validCombinations);
+    CHECK( validCombinations.size() == 1 );
+    CHECK( validCombinations[0].size() == 3 );
+    CHECK( owned_pieces.size() == 0 );
+
+    owned_pieces.clear();
+    validCombinations.clear();
+    owned_pieces.push_back( {BLACK, 3});
+    owned_pieces.push_back( {BLUE, 3});
+    owned_pieces.push_back( {BLUE, 3});
+    owned_pieces.push_back( {RED, 3});
+    owned_pieces.push_back( {YELLOW, 3});
+
+    dropColorCombinations(owned_pieces, validCombinations);
+    CHECK( validCombinations.size() == 1 );
+    CHECK( validCombinations[0].size() == 4 );
+    CHECK( owned_pieces.size() == 1 );
+
+//    owned_pieces.clear();   // to use jolly use dropColorCombinations with jolly
+//    validCombinations.clear();
+//    owned_pieces.push_back( {BLACK, 3});
+//    owned_pieces.push_back( Jolly);
+//    owned_pieces.push_back( {BLUE, 3});
+//    owned_pieces.push_back( {RED, 3});
+//    owned_pieces.push_back( {YELLOW, 3});
+
+//    dropColorCombinations(owned_pieces, validCombinations);
+//    CHECK( validCombinations.size() == 1 );
+//    CHECK( validCombinations[0].size() == 4 );
+//    CHECK( owned_pieces.size() == 1 );
+//    CHECK( owned_pieces[0] == Jolly);
+
+//    owned_pieces.clear();
+//    validCombinations.clear();
+//    owned_pieces.push_back( {BLACK, 3});
+//    owned_pieces.push_back( {RED, 3});
+//    owned_pieces.push_back( Jolly);
+
+//    dropColorCombinations(owned_pieces, validCombinations);
+//    CHECK( validCombinations.size() == 1 );
+//    CHECK( validCombinations[0].size() == 3 );
+//    CHECK( owned_pieces.size() == 0 );
+
+}
+

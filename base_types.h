@@ -5,6 +5,8 @@
 #include <stdint.h>
 #include <vector>
 #include <assert.h>
+#include <iterator>
+#include <algorithm>
 
 enum Color{
     YELLOW = 0,
@@ -17,7 +19,7 @@ enum Color{
 
 class Piece{
 public:
-    Piece(): _data({UNDEFINED,0}) {}
+    Piece(): _data({UNDEFINED,15}) {}
     Piece(Color col, uint8_t value): _data( { static_cast<uint8_t>(col),value} ) {}
 
     Color color() const    { return static_cast<Color>(_data.col); }
@@ -94,7 +96,7 @@ public:
     const_iterator end()   const { return &_piece[_size]; }
 
     iterator begin()  { return &_piece[0]; }
-    iterator end()    { return &_piece[_size-1]; }
+    iterator end()    { return &_piece[_size]; }
 
     Piece& front()             { assert( _size >0 ); return _piece[0]; }
     Piece& back()              { assert( _size >0 ); return _piece[_size-1]; }
@@ -120,7 +122,7 @@ public:
     // and the second the indexes  [pos, size()-1]
     std::pair<PieceCombination,PieceCombination> split(int pos);
 
-    // Note: it is worth using here the design pattern known as "memoization"
+    // Note: it is worth using here the design pattern known as "memorization"
 
     bool isValidCombination();
 
@@ -135,6 +137,15 @@ private:
    uint8_t _size;
 };
 
+// This template function works with both std::vector<Pieces> and PieceCombination
+template <typename T> int countJolly(const T& pieces)
+{
+    // http://en.cppreference.com/w/cpp/algorithm/count
+
+    // don't do sort if you don't need to
+   return  std::count_if( pieces.begin(), pieces.end(),
+                          [](const Piece& p) {return p.isJolly();} );
+}
 
 class RandomPiecesStack
 {

@@ -1,6 +1,5 @@
 #include <random>
 #include <algorithm>
-#include <iterator>
 #include "base_types.h"
 
 
@@ -85,9 +84,43 @@ bool PieceCombination::isValidNumberSequence(bool reorder_jolly )
 {
     if( size() <=2 ) return false;
 
-    std::sort( begin(), end(), numberCompare );
+    std::sort( begin(), end(), numberCompare);
 
-    //TODO check the numbers
-    throw std::runtime_error("NOT implemented yet");
-    return false;
+    int jolly_count = 0;
+
+    for( int i = size()-1 ; i >=0 && _piece[i].isJolly(); i-- )
+    {
+        jolly_count++;
+    }
+    //--------------------------------------
+    int expected_number  = _piece[0].number() +1;
+    Color expected_color = _piece[0].color();
+
+
+    for (int i=1; i<size() && !_piece[i].isJolly(); i++ )
+    {
+        if( _piece[i].color() != expected_color)
+        {
+            return false;
+        }
+
+        if( _piece[i].number() != expected_number)
+        {
+            //try using a Jolly
+            if( jolly_count > 0 )
+            {
+                jolly_count--;
+                if( reorder_jolly )
+                {
+                    std::rotate( &_piece[i], end()-1, end() );
+                }
+                else{
+                    i--;
+                }
+            }
+            else{ return false; }
+        }
+        expected_number++;
+    }
+    return true;
 }

@@ -82,7 +82,6 @@ bool PieceCombination::isValidColorSequence() const
 
 bool PieceCombination::isValidNumberSequence(bool reorder_jolly )
 {
-    reorder_jolly = true;
     if( size() <=2 ) return false;
 
     std::sort( begin(), end(), numberCompare);

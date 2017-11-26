@@ -77,8 +77,8 @@ private:
 
 void dropColorCombinations( std::vector<Piece>& playerHand, std::vector<PieceCombination>& validCombinations);
 void dropNumericalCombinations(std::vector<Piece>& playerHand, std::vector<PieceCombination>& validCombinations);
-int dropJollyNumbericalCombinations( std::vector<Piece>& playerHand, std::vector<PieceCombination>& validCombinations, const Player &player);
-int dropJollyColorCombinations( std::vector<Piece>& playerHand, std::vector<PieceCombination>& validCombinations, const Player &player);
+void dropJollyNumbericalCombinations( std::vector<Piece>& playerHand, std::vector<PieceCombination>& validCombinations);
+void dropJollyColorCombinations( std::vector<Piece>& playerHand, std::vector<PieceCombination>& validCombinations);
 //-----------------------------------------------------------------------------
 // Inline Declarations
 //-----------------------------------------------------------------------------

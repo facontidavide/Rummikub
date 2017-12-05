@@ -3,6 +3,7 @@
 
 #include "base_types.h"
 #include <utility>
+#include <array>
 
 class GameEngine;
 
@@ -79,16 +80,15 @@ void dropColorCombinations( std::vector<Piece>& playerHand, std::vector<PieceCom
 void dropNumericalCombinations(std::vector<Piece>& playerHand, std::vector<PieceCombination>& validCombinations);
 void dropJollyNumbericalCombinations( std::vector<Piece>& playerHand, std::vector<PieceCombination>& validCombinations);
 void dropJollyColorCombinations( std::vector<Piece>& playerHand, std::vector<PieceCombination>& validCombinations);
+void selectValidCombFromCounter(const std::vector<Piece>& playerHand, PieceCombination& validComb,const std::array<uint,13>& counter,
+                                const int combFirstPiece,const int numPiecesTofirst, int firstPieceCounter,const int numPiecesToLast);
+void selectValidCombFromCounterJolly(const std::vector<Piece>& playerHand, PieceCombination& validComb,const std::array<uint,13>& counter,
+                const int combFirstPiece,const int numPiecesTofirst, int firstPieceCounter,const int numPiecesToLast,const int jollyPieces);
+
+
 //-----------------------------------------------------------------------------
 // Inline Declarations
 //-----------------------------------------------------------------------------
-
-inline void resetConvinationSearch(int& validCombFirstPiece, int& validCombLastPiece, int & validCombFirstNumber) //convination has been stored or is not valid reset iterators.
-{
-    validCombFirstPiece = -1;
-    validCombLastPiece  = -1;
-    validCombFirstNumber = -1;
-}
 
 inline void resetConvinationSearch(int& validCombFirstPiece, int& validCombLastPiece) //convination has been stored or is not valid reset iterators.
 {
@@ -104,10 +104,14 @@ inline void pushAllCombinations(std::vector<PieceCombination>& validCombinations
     }
 }
 
-inline bool existValidJollyConvinations(const int oldCombinationsPieces, const int combinationsPieces, const int oldRemainingJollyPieces, const int jollyPieces, const int initialJollyPieces)
-{
-    return(oldCombinationsPieces>0 || combinationsPieces>0 && (oldRemainingJollyPieces!= initialJollyPieces || jollyPieces!= initialJollyPieces));
-}
+
+
+
+
+//inline bool existValidJollyConvinations(const int oldCombinationsPieces, const int combinationsPieces, const int oldRemainingJollyPieces, const int jollyPieces, const int initialJollyPieces)
+//{
+//    return(oldCombinationsPieces>0 || combinationsPieces>0 && (oldRemainingJollyPieces!= initialJollyPieces || jollyPieces!= initialJollyPieces));
+//}
 
 
 

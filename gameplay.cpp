@@ -52,10 +52,10 @@ bool GameEngine::dropCombinationsInYourHand(Player &player, std::vector<PieceCom
     for(int i=0; i<4; i++)
     {
         for( PieceCombination comb : validCombinations[i])
-            {
-                combinations_pieces[i] += comb.size();
-                combinations_value[i] += comb.getCombinationSumedValue();
-            }
+        {
+            combinations_pieces[i] += comb.size();
+            combinations_value[i] += comb.getCombinationSumedValue();
+        }
     }
 
     // select the best combination
@@ -70,7 +70,7 @@ bool GameEngine::dropCombinationsInYourHand(Player &player, std::vector<PieceCom
     }
     else if(combinations_pieces[0]>0 || combinations_pieces[1]>0)  // any valid solution, after firts play
     {
-       return true;
+        return true;
     }
 
     return false;
@@ -79,72 +79,45 @@ bool GameEngine::dropCombinationsInYourHand(Player &player, std::vector<PieceCom
 void dropColorCombinations( std::vector<Piece>& playerHand, std::vector<PieceCombination>& validCombinations)
 {
     std::sort( playerHand.begin(), playerHand.end(), numberCompare ); // sort by number
+
     int jollyPieces = countJolly(playerHand);
-
-    // unsigned counter[13];
-    //1,2,1,2,1,0,0,0,0,0,0,1,0
-
-    unsigned yrub_counter[3]={0,0,0,0}; //yellow, red, blue, black;   counter
     int combFirstPiece = 0;
     int combLastPiece = 0;
-    bool color_found[4] = { false, false, false, false };
     int number_of_colors=0;
-    bool two_valid_posible_combinations= false;
+    //bool two_valid_posible_combinations= false; TODO
     PieceCombination validComb;
 
     for(int i=0; i< playerHand.size() - jollyPieces; i++) // posible combinations without jolly
     {
         combFirstPiece = i;
         const auto& currNumber = playerHand[i].number();
-
-        possibleComb.clear();
-        yrub_counter[3]={0,0,0,0};
-        color_found[4] = { false, false, false, false };
+        validComb.clear();
+        std::array<uint,4> yrub_counter = {0,0,0,0};
         number_of_colors=0;
-        int e = i;   // TODO preguntar com funciona referencia si con i funcionaria...
-        while (playerHand[e].number()==currNumber && e < (playerHand.size() - jollyPieces))
+
+        while (playerHand[i].number()==currNumber && i < (playerHand.size() - jollyPieces))
         {
             const uint8_t index = static_cast<uint8_t>( playerHand[i].color() );
-            // YELLOW = 0, RED = 1, BLUE = 2, BLACK = 3
-            switch(index)
-            {
-            case 0 :
-                yrub_counter[0]++;
-                if(!color_found[0]){number_of_colors++;}
-                color_found[0]=true;
-                break;
-            case 1 :
-                yrub_counter[1]++;
-                if(!color_found[1]){number_of_colors++;}
-                color_found[i]=true;
-                break;
-            case 2 :
-                yrub_counter[2]++;
-                if(!color_found[2]){number_of_colors++;}
-                color_found[2]=true;
-                break;
-            case 3 :
-                yrub_counter[3]++;
-                if(!color_found[3]){number_of_colors++;}
-                color_found[3]=true;
-                break;
-            }
-            e++;
+
+            if(yrub_counter[index] == 0) {number_of_colors++;}
+            yrub_counter[index]++;
+
+            i++;
         }
-        i = e; // to be deleted
 
         if(number_of_colors<3) continue; // no valid convination skip the rest
 
-        combLastPiece= e;
-//        if(combLastPiece-combFirstPiece>5)
-//        {
-//            for(int i=0; i<3; i++)
-//            {
-//                yrub_counter[i]>
-//            }
-//            two_valid_posible_combinations=true; }
+        combLastPiece= i;
+        //TODO implement two valid convinations
+        //        if(combLastPiece-combFirstPiece>5)
+        //        {
+        //            for(int i=0; i<3; i++)
+        //            {
+        //                yrub_counter[i]>
+        //            }
+        //            two_valid_posible_combinations=true; }
 
-        unsigned yrub_counter_copy= yrub_counter;
+        std::array<uint,4> yrub_counter_copy (yrub_counter);
         for(int j=combFirstPiece; j <=combLastPiece; j++ )
         {
             const uint8_t index = static_cast<uint8_t>( playerHand[j].color() );
@@ -153,9 +126,9 @@ void dropColorCombinations( std::vector<Piece>& playerHand, std::vector<PieceCom
                 yrub_counter[index]--;
                 validComb.push_back(playerHand[j]);
             }
-         }
-
-         assert(validComb.isValidCombination()); validCombinations.push_back(validComb);
+        }
+        assert(validComb.isValidCombination()); validCombinations.push_back(validComb);
+    }
 }
 
 
@@ -238,47 +211,131 @@ void dropColorCombinations( std::vector<Piece>& playerHand, std::vector<PieceCom
 //}
 
 
+/* selectValidCombFromCounter
+ *
+ * I: playerHand, counter, combFirstPiece, numPiecesTofirst, firstPieceCounter, numPiecesToLast
+ * O: validComb
+ *
+ * Example:
+ **************************************************************************
+ * combFirstPiece     *
+ *                    1 3 5 5 5 6 7 8 10 13 ...         playerHand
+ * firstValidPiece        *
+ * lastValidPiece                   *
+ *
+ * numberOfPiecesToValid  2
+ * firstPieceCounter          *
+ *                    0 1 1 0 3 1 1 1 0       counter
+ *
+ *
+ * (firstValidPiece = combFirstPiece + numberOfPiecesToValid)
+ ****************************************************************************
+ */
 
+void selectValidCombFromCounter(const std::vector<Piece>& playerHand, PieceCombination& validComb,const std::array<uint,13>& counter,
+const int combFirstPiece,const int numPiecesTofirst, int firstPieceCounter,const int numPiecesToLast)
+{
+    int firstValidPiece = combFirstPiece + numPiecesTofirst;
+    for(int i=firstValidPiece; i< (combFirstPiece + numPiecesToLast); i++)
+    {
+        assert(counter[firstPieceCounter] > 0); validComb.push_back(playerHand[i]);
+        if(counter[firstPieceCounter]>1)
+        {
+            i+= (counter[firstPieceCounter] - 1); // skip repeated pieces go to next valid
+        }
+        firstPieceCounter++;
+    }
+}
+
+
+/* TODO implement this
+**************************************************************************
+* combFirstPiece     *
+*                    1 3 5 5 5 7 10 13 ...         playerHand
+* firstValidPiece        *
+* lastValidPiece                   *
+*
+* numberOfPiecesToValid  3
+* firstPieceCounter          *
+*                    0 1 1 0 3 0 1 0 0       counter
+*
+*
+* (firstValidPiece = combFirstPiece + numberOfPiecesToValid)
+****************************************************************************
+*/
+void selectValidCombFromCounterJolly(const std::vector<Piece>& playerHand, PieceCombination& validComb, const std::array<uint,13>& counter,
+                const int combFirstPiece, const int numPiecesTofirst, int firstPieceCounter, const int numPiecesToLast, const int jollyPieces)
+{
+    int firstValidPiece = combFirstPiece + numPiecesTofirst;
+    for(int i=firstValidPiece; i< (combFirstPiece + numPiecesToLast); i++)
+    {
+        assert(counter[firstPieceCounter] > 0); validComb.push_back(playerHand[i]);
+        if(counter[firstPieceCounter]>1)
+        {
+            i+= (counter[firstPieceCounter] - 1); // skip repeated pieces go to next valid
+        }
+        firstPieceCounter++;
+    }
+}
 
 void dropNumericalCombinations( std::vector<Piece>& playerHand, std::vector<PieceCombination>& validCombinations)
 {
     std::sort( playerHand.begin(), playerHand.end(), colorCompare ); // sort by color
-
     int jollyPieces = countJolly(playerHand);
     int combFirstPiece = 0;
-    int combLastPiece = 0;
-    bool isValidCombination = false;
-    PieceCombination possibleComb, validComb;
+    int valid_numbers=0;
+    PieceCombination validComb;
 
     for(int i=0; i< playerHand.size() - jollyPieces; i++) // posible combinations without jolly
     {
+        const auto& currColor = playerHand[i].color();
+        std::array<uint,13> counter={0,0,0,0,0,0,0,0,0,0,0,0,0};
+        validComb.clear();
+        valid_numbers=0;
         combFirstPiece = i;
-        combLastPiece = i + 2;
 
-        possibleComb.clear();
-        for(int e=combFirstPiece; e <=combLastPiece; e++ )
+        while (playerHand[i].color()==currColor && i < (playerHand.size() - jollyPieces))
         {
-            possibleComb.push_back(playerHand[e]);
-        }
-        uint j = combLastPiece + 1;
-        while( possibleComb.isValidNumberSequence() && j<playerHand.size() - jollyPieces )
-        {
-            isValidCombination = true;
-            validComb = possibleComb;
-            combLastPiece = j;
-            possibleComb.push_back(playerHand[j]);
-            j++;
+            const uint8_t index = playerHand[i].number() -1;
+            if(counter[index]==0){valid_numbers++;}
+            counter[index]++;
+            i++;
         }
 
-        if (isValidCombination)
+        if(valid_numbers<3) continue; // no valid convination skip the rest
+
+        int numPiecesTofirst = 0;
+        int firstValid=0;
+        int last = 0;
+        int numPiecesToLast = 0;
+        for(int j=0; j<13; j++)
         {
-            validCombinations.push_back(validComb);
-            isValidCombination = false;
-            i=combFirstPiece -1;
+            if(counter[j]==0 || j == 12)
+            {
+                if( (last - firstValid) >= 3)
+                {
+                    selectValidCombFromCounter(playerHand, validComb, counter, combFirstPiece, numPiecesTofirst, firstValid, numPiecesToLast);
+                    assert(validComb.isValidCombination()); validCombinations.push_back(validComb);
+                    validComb.clear();
+                }
+
+                last=-1;
+                firstValid =-1;
+                numPiecesTofirst=numPiecesToLast;
+            }
+            else if(counter[j]>0)
+            {
+                if(firstValid==-1)
+                {
+                    numPiecesTofirst+=counter[j];
+                    firstValid=j;
+                }
+                else{ last=j;}
+                numPiecesToLast+=counter[j];
+            }
         }
     }
 }
-
 
 
 void dropJollyColorCombinations( std::vector<Piece>& playerHand, std::vector<PieceCombination>& validCombinations)
@@ -289,56 +346,61 @@ void dropJollyColorCombinations( std::vector<Piece>& playerHand, std::vector<Pie
     if (jollyPieces==0)
         return; // not jolly pieces.
 
-    uint lastNonJollyNumber = playerHand.size() - 1 - jollyPieces ;
-
     int combFirstPiece = 0;
     int combLastPiece = 0;
-    bool isValidCombination = false;
-    PieceCombination possibleComb, validComb;
+    int number_of_colors=0;
+    //bool two_valid_posible_combinations= false; TODO
+    PieceCombination validComb;
 
-    for(uint i=0; i < lastNonJollyNumber; i++)
+    for(int i=0; i< playerHand.size() - jollyPieces; i++) // posible combinations without jolly
     {
         combFirstPiece = i;
-        combLastPiece = i+ (2 - jollyPieces);
+        const auto& currNumber = playerHand[i].number();
+        validComb.clear();
+       std::array<uint,4> yrub_counter={0,0,0,0};
+        number_of_colors=0;
 
-        possibleComb.clear();
-        if (combFirstPiece >= combLastPiece)    // corner case 2 or more jollys
+        while (playerHand[i].number()==currNumber && i < (playerHand.size() - jollyPieces))
         {
-             possibleComb.push_back(playerHand[i]);
-             combLastPiece = combFirstPiece;
-        }
-        for(int e=combFirstPiece; e <=combLastPiece; e++ )
-        {
-            possibleComb.push_back(playerHand[e]);
-        }
+            const uint8_t index = static_cast<uint8_t>( playerHand[i].color() );
 
-        for(int e = 0; e< 2; e++) // never want more than 2 jollys in one combination
-        {
-            possibleComb.push_back(playerHand[playerHand.size()-1]); //jolly
+            if(yrub_counter[index] == 0) {number_of_colors++;}
+            yrub_counter[index]++;
+
+            i++;
         }
 
-        uint j = combLastPiece + 1;
-        while( possibleComb.isValidColorSequence())
+        if(number_of_colors<(3-jollyPieces)) continue; // no valid convination skip the rest
+
+        combLastPiece= i;
+        //TODO implement two valid convinations
+        //        if(combLastPiece-combFirstPiece>5)
+        //        {
+        //            for(int i=0; i<3; i++)
+        //            {
+        //                yrub_counter[i]>
+        //            }
+        //            two_valid_posible_combinations=true; }
+
+        std::array<uint,4> yrub_counter_copy = yrub_counter;
+        for(int j=combFirstPiece; j <=combLastPiece; j++ )
         {
-            isValidCombination = true;
-            validComb=possibleComb;
-            combLastPiece=j-1;
-            if(j<playerHand.size() - jollyPieces)
+            const uint8_t index = static_cast<uint8_t>( playerHand[j].color() );
+            if(yrub_counter[index]>=1 && yrub_counter[index]== yrub_counter_copy[index] )
             {
-                possibleComb.push_back(playerHand[j]);
-                j++;
+                yrub_counter[index]--;
+                validComb.push_back(playerHand[j]);
             }
-            else
-                break;
         }
-        if (isValidCombination)
+        while(validComb.size()<3)
         {
-            validCombinations.push_back(validComb);
-            isValidCombination = false;
-            i = combLastPiece;
+            validComb.push_back(Jolly);
         }
+        assert(validComb.isValidCombination()); validCombinations.push_back(validComb);
     }
 }
+
+
 
 void dropJollyNumbericalCombinations( std::vector<Piece>& playerHand, std::vector<PieceCombination>& validCombinations)
 {
@@ -349,41 +411,68 @@ void dropJollyNumbericalCombinations( std::vector<Piece>& playerHand, std::vecto
     if (jollyPieces==0)
         return ; // not jolly pieces.
 
-    uint lastNonJollyNumber = playerHand.size() - 1 - jollyPieces ;
-
     int combFirstPiece = 0;
-    int combLastPiece = 0;
-    bool isValidCombination = false;
-    PieceCombination possibleComb, validComb;
+    int valid_numbers=0;
+    PieceCombination validComb;
 
-    for(uint i=0; i < lastNonJollyNumber; i++)
+    for(int i=0; i< playerHand.size() - jollyPieces; i++) // posible combinations without jolly
     {
+        const auto& currColor = playerHand[i].color();
+        std::array<uint,13> counter = {0,0,0,0,0,0,0,0,0,0,0,0,0};
+        validComb.clear();
+        valid_numbers=0;
         combFirstPiece = i;
-        combLastPiece = i+1;
 
-        possibleComb.clear();
-        for(int e=combFirstPiece; e <=combLastPiece; e++ )
+        while (playerHand[i].color()==currColor && i < (playerHand.size() - jollyPieces))
         {
-            possibleComb.push_back(playerHand[e]);
+            const uint8_t index = playerHand[i].number() -1;
+            if(counter[index]==0){valid_numbers++;}
+            counter[index]++;
+            i++;
         }
-        possibleComb.push_back(playerHand[playerHand.size()-1]); //jolly
-        uint j = combLastPiece + 1;
-        while( possibleComb.isValidNumberSequence(true) && j<playerHand.size() - jollyPieces )
+
+        if(valid_numbers < ( 3 - jollyPieces)) continue; // no valid convination skip the rest
+
+        int numPiecesTofirst = 0;
+        int firstValid=0;
+        int last = 0;
+        int numPiecesToLast = 0;
+        for(int j=0; j<13; j++)
         {
-            isValidCombination = true;
-            validComb=possibleComb;
-            combLastPiece = j;
-            possibleComb.push_back(playerHand[j]);
-            j++;
-        }
-        if (isValidCombination)
-        {
-            validCombinations.push_back(validComb);
-            isValidCombination = false;
-            i = combLastPiece-1;
+            if(counter[j]==0 || j == 12)
+            {
+                if( (last - firstValid) >= ( 3 - jollyPieces))
+                {
+                    selectValidCombFromCounterJolly(playerHand, validComb, counter, combFirstPiece, numPiecesTofirst, firstValid, numPiecesToLast, jollyPieces);
+                    while( validComb.size() < 3)
+                    {
+                        validComb.push_back(Jolly);
+                    }
+                    assert(validComb.isValidCombination()); validCombinations.push_back(validComb);
+                    validComb.clear();
+                }
+
+                last=-1;
+                firstValid =-1;
+                numPiecesTofirst=numPiecesToLast;
+            }
+            else if(counter[j]>0)
+            {
+                if(firstValid==-1)
+                {
+                    numPiecesTofirst+=counter[j];
+                    firstValid=j;
+                }
+                else{ last=j;}
+                numPiecesToLast+=counter[j];
+            }
         }
     }
 }
+
+
+
+
 
 
 
